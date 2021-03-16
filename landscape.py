@@ -49,12 +49,12 @@ def update_parameters(session):
 				pass 
 			elif current_viewers > VIEWERS:
 				# more viewers - decrease chord density, increase speed
-				CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY - 1), 1, 12)
-				REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER / 1.33, 0.5, 3.0)
+				CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY - random.choice([1, 2])), 1, 12)
+				REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER / 1.4, 0.5, 4.0)
 			elif current_viewers < VIEWERS:
 				# fewer viewers - increase chord density, decrease speed
-				CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY + 1), 1, 12)
-				REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER * 1.33, 0.5, 3.0)
+				CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY + random.choice([1, 2])), 1, 12)
+				REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER * 1.4, 0.5, 4.0)
 			VIEWERS = current_viewers
 
 		except Exception as e:
@@ -62,7 +62,7 @@ def update_parameters(session):
 
 		print("***** New parameters:" + '\t' + str(VIEWERS) + '\t' + str(CHORD_DENSITY) + '\t' + str(REST_MULTIPLIER))
 
-		time_until_next_update = 30 / (REST_MULTIPLIER ** 1.1)
+		time_until_next_update = 30 / (REST_MULTIPLIER ** 0.7) # fast music lasts longer
 
 		print("***** Next API call in approx " + str(int(time_until_next_update)) + " seconds")
 		print("*********************************************************")
@@ -119,10 +119,12 @@ def play_chords(session):
 	piano3 = session.new_osc_part("piano3", 7402, "127.0.0.1")
 	piano4 = session.new_osc_part("piano4", 7403, "127.0.0.1")
 
-	reset_piano1 = session.new_osc_part("reset_piano1", 7501, "127.0.0.1")
-	reset_piano2 = session.new_osc_part("reset_piano2", 7502, "127.0.0.1")
-	reset_piano3 = session.new_osc_part("reset_piano3", 7503, "127.0.0.1")
-	reset_piano4 = session.new_osc_part("reset_piano4", 7504, "127.0.0.1")
+	reset_piano1 = session.new_osc_part("reset_piano1", 7500, "127.0.0.1")
+	reset_piano2 = session.new_osc_part("reset_piano2", 7501, "127.0.0.1")
+	reset_piano3 = session.new_osc_part("reset_piano3", 7502, "127.0.0.1")
+	reset_piano4 = session.new_osc_part("reset_piano4", 7503, "127.0.0.1")
+
+	target_incrementer = session.new_osc_part("target_incrementer", 7600, "127.0.0.1")
 
 	chords = []
 	chords.append(Chord.from_string("27.0~27.0,1,1;55.0,5,1;58.0,3,1;61.0,7,1;76.0,17,1;78.0,19,1;81.0,11,1;84.0,27,1;86.0,15,1;89.0,9,1;92.0,21,1;95.0,13,1"))
@@ -143,7 +145,7 @@ def play_chords(session):
 									ban_repeat_average_value = True,
 									seed_value = None)
 
-	pitch_index_rg = RandomizerGroup(nbr_randomizers = 3, 
+	pitch_index_rg = RandomizerGroup(nbr_randomizers = 5, 
 									output_range = [1, 11], # excludes fundamental! (= pitch index 0)
 									ban_repeat_average_value = True,
 									seed_value = 6)
@@ -159,11 +161,19 @@ def play_chords(session):
 	short_rests = [2, 3, 4.5]
 	long_rests = [4.5, 6.75, 10.125]
 
+	# reset everything before starting
+	reset_piano1.play_note(0, 0.0, 0.01)
+	reset_piano2.play_note(0, 0.0, 0.01)
+	reset_piano3.play_note(0, 0.0, 0.01)
+	reset_piano4.play_note(0, 0.0, 0.01)
+
 	while SHOULD_CONTINUE:
+
+		target_incrementer.play_note(0, 0.0, 0.01)
 
 		print("----- Getting chord for piano 1")
 		try:
-			reset_piano1.play_note(0, 0.0, 0.1)
+			reset_piano1.play_note(0, 0.0, 0.01)
 			piano1.play_note(0, 0.0, 1.0, blocking = False)
 			piano1.play_chord(get_midi_numbers_to_play(chords, chord_index_rg, pitch_index_rg), 1.5, 1.0, blocking = False)
 
@@ -179,7 +189,7 @@ def play_chords(session):
 
 		print("----- Getting chord for piano 2")
 		try:
-			reset_piano2.play_note(0, 0.0, 0.1)
+			reset_piano2.play_note(0, 0.0, 0.01)
 			piano2.play_note(0, 0.0, 1.0, blocking = False)
 			piano2.play_chord(get_midi_numbers_to_play(chords, chord_index_rg, pitch_index_rg), 1.5, 1.0, blocking = False)
 
@@ -195,7 +205,7 @@ def play_chords(session):
 
 		print("----- Getting chord for piano 3")
 		try:
-			reset_piano3.play_note(0, 0.0, 0.1)
+			reset_piano3.play_note(0, 0.0, 0.01)
 			piano3.play_note(0, 0.0, 1.0, blocking = False)
 			piano3.play_chord(get_midi_numbers_to_play(chords, chord_index_rg, pitch_index_rg), 1.5, 1.0, blocking = False)
 
@@ -211,7 +221,7 @@ def play_chords(session):
 
 		print("----- Getting chord for piano 4")
 		try:
-			reset_piano4.play_note(0, 0.0, 0.1)
+			reset_piano4.play_note(0, 0.0, 0.01)
 			piano4.play_note(0, 0.0, 1.0, blocking = False)
 			piano4.play_chord(get_midi_numbers_to_play(chords, chord_index_rg, pitch_index_rg), 1.5, 1.0, blocking = False)
 
@@ -222,16 +232,14 @@ def play_chords(session):
 		except Exception as e:
 			print(e)
 
-
-
 # -------------------------------------------------------------------------------------------------------------------------------------------
 
 s = scamp.Session()
 scamp.current_clock().synchronization_policy = "no synchronization"
 s.tempo = 60
 
-reset_everything = s.new_osc_part("reset_everything", 7500, "127.0.0.1")
-reset_everything.play_note(0, 0.0, 0.01)
+# reset everything
+s.new_osc_part("master_reset", 7700, "127.0.0.1").play_note(0, 0.0, 0.01)
 s.wait(1)
 
 s.fork(update_parameters, args = [s])
