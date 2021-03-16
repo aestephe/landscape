@@ -318,7 +318,6 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-97",
@@ -711,7 +710,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 386.0, 585.0, 50.0, 22.0 ],
 													"style" : "",
-													"text" : "29 72"
+													"text" : "100 78"
 												}
 
 											}
@@ -789,7 +788,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 695.0, 475.0, 164.0, 22.0 ],
 													"style" : "",
-													"text" : "/piano4/end_note 29"
+													"text" : "/piano4/end_note 100"
 												}
 
 											}
@@ -971,7 +970,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 403.0, 111.0, 262.0, 22.0 ],
 													"style" : "",
-													"text" : "/piano4/end_note 29"
+													"text" : "/piano4/end_note 100"
 												}
 
 											}
@@ -1724,7 +1723,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 386.0, 585.0, 50.0, 22.0 ],
 													"style" : "",
-													"text" : "47 82"
+													"text" : "90 53"
 												}
 
 											}
@@ -1802,7 +1801,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 695.0, 475.0, 164.0, 22.0 ],
 													"style" : "",
-													"text" : "/piano3/end_note 47"
+													"text" : "/piano3/end_note 90"
 												}
 
 											}
@@ -1984,7 +1983,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 403.0, 111.0, 262.0, 22.0 ],
 													"style" : "",
-													"text" : "/piano3/end_note 47"
+													"text" : "/piano3/end_note 90"
 												}
 
 											}
@@ -3140,7 +3139,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 386.0, 585.0, 50.0, 22.0 ],
 													"style" : "",
-													"text" : "41 75"
+													"text" : "80 89"
 												}
 
 											}
@@ -3218,7 +3217,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 695.0, 475.0, 164.0, 22.0 ],
 													"style" : "",
-													"text" : "/piano2/end_note 41"
+													"text" : "/piano2/end_note 80"
 												}
 
 											}
@@ -3400,7 +3399,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 403.0, 111.0, 262.0, 22.0 ],
 													"style" : "",
-													"text" : "/piano2/end_note 41"
+													"text" : "/piano2/end_note 80"
 												}
 
 											}
@@ -4166,7 +4165,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 386.0, 585.0, 50.0, 22.0 ],
 													"style" : "",
-													"text" : "35 59"
+													"text" : "72 79"
 												}
 
 											}
@@ -4244,7 +4243,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 695.0, 475.0, 164.0, 22.0 ],
 													"style" : "",
-													"text" : "/piano1/end_note 35"
+													"text" : "/piano1/end_note 72"
 												}
 
 											}
@@ -4426,7 +4425,7 @@
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 403.0, 111.0, 262.0, 22.0 ],
 													"style" : "",
-													"text" : "/piano1/end_note 35"
+													"text" : "/piano1/end_note 72"
 												}
 
 											}
