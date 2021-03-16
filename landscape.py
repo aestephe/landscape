@@ -1,4 +1,5 @@
 import copy
+from collections import OrderedDict
 import random
 import scamp
 import sys
@@ -33,10 +34,9 @@ def update_parameters(session):
 		try:
 			foo.play_note(0, 0.0, 10.0, blocking = False) 
 		except Exception as e:
-			print(e.__doc__)
-			print(e.message)
+			print(e)
 
-		print("****************************************************************************************************")
+		print("*********************************************************")
 
 		try:
 			print("***** Calling Google API")
@@ -65,7 +65,7 @@ def update_parameters(session):
 		time_until_next_update = 30 / (REST_MULTIPLIER ** 1.1)
 
 		print("***** Next API call in approx " + str(int(time_until_next_update)) + " seconds")
-		print("****************************************************************************************************")
+		print("*********************************************************")
 
 		scamp.wait(time_until_next_update) # faster music stays around for longer
 
@@ -96,7 +96,7 @@ def get_midi_numbers_to_play(chords, chord_index_rg, pitch_index_rg):
 	for i in range(0, 100):
 		selected_pitch_indices.append(pitch_index_rg.get_average_value())
 	# remove duplicates and select the first n (according to the chord density)
-	selected_pitch_indices = list(set(selected_pitch_indices))[:Utilities.clip(random.choice(
+	selected_pitch_indices = list(OrderedDict.fromkeys(selected_pitch_indices))[:Utilities.clip(random.choice(
 																				[CHORD_DENSITY - 1, 
 																				CHORD_DENSITY, 
 																				CHORD_DENSITY, 
