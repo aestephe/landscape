@@ -13,8 +13,8 @@ API_KEY = open('landscape_config.txt', 'r').readlines()[0]
 VIDEO_ID = open('landscape_config.txt', 'r').readlines()[1]
 OVERTONE_CLASSES = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 27]
 VIEWERS = None
-CHORD_DENSITY = 8
-REST_MULTIPLIER = 3.0
+CHORD_DENSITY = 6
+REST_MULTIPLIER = 2.0
 SHOULD_CONTINUE = True
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -58,12 +58,11 @@ def update_parameters(session):
 			VIEWERS = current_viewers
 
 		except Exception as e:
-			print(e.__doc__)
-			print(e.message)
+			print(e)
 
 		print("***** New parameters:" + '\t' + str(VIEWERS) + '\t' + str(CHORD_DENSITY) + '\t' + str(REST_MULTIPLIER))
 
-		time_until_next_update = 30 / REST_MULTIPLIER
+		time_until_next_update = 30 / (REST_MULTIPLIER ** 1.1)
 
 		print("***** Next API call in approx " + str(int(time_until_next_update)) + " seconds")
 		print("****************************************************************************************************")
@@ -75,11 +74,13 @@ def update_parameters(session):
 def jitter_pitches(pitches):
 	out = copy.deepcopy(pitches)
 
-	check = random.choice([0, 0, 1])
-	if check == 1:
+	if random.choice([0, 0, 1]) == 1:
 		r = random.randint(0, len(pitches) - 1)
 		copied_pitch = copy.deepcopy(pitches[r])
-		copied_pitch.midi_number -= 12
+		if random.choice([0, 1]) == 0:
+			copied_pitch.midi_number -= 1
+		else:
+			copied_pitch.midi_number += 1
 		pitches[r] = copied_pitch
 
 	return out
@@ -91,17 +92,16 @@ def get_midi_numbers_to_play(chords, chord_index_rg, pitch_index_rg):
 	chosen_chord.sort_pitches_by_midi_number()
 
 	selected_pitch_indices = []
-	print("----- Determining pitch indices")
-	while len(selected_pitch_indices) < Utilities.clip(random.choice(
-														[CHORD_DENSITY - 1, 
-														CHORD_DENSITY, 
-														CHORD_DENSITY, 
-														CHORD_DENSITY + 1]), 
-													1, 12):
-		index = None
-		while index is None or index in selected_pitch_indices:
-			index = pitch_index_rg.get_average_value()
-		selected_pitch_indices.append(index)
+	# hack to generate a bunch of indices
+	for i in range(0, 100):
+		selected_pitch_indices.append(pitch_index_rg.get_average_value())
+	# remove duplicates and select the first n (according to the chord density)
+	selected_pitch_indices = list(set(selected_pitch_indices))[:Utilities.clip(random.choice(
+																				[CHORD_DENSITY - 1, 
+																				CHORD_DENSITY, 
+																				CHORD_DENSITY, 
+																				CHORD_DENSITY + 1]), 
+																		1, 12)]
 	print("----- Got pitch indices " + str(selected_pitch_indices))
 	
 	selected_pitches = jitter_pitches([chosen_chord.pitches[i] for i in selected_pitch_indices])
@@ -153,8 +153,11 @@ def play_chords(session):
 									ban_repeat_average_value = False,
 									seed_value = None)
 
-	short_rests = [1.5, 2.25, 3.375]
-	long_rests = [3.375, 5.0625, 7.59375]
+	# short_rests = [1.5, 2.25, 3.375]
+	# long_rests = [3.375, 5.0625, 7.59375]
+
+	short_rests = [2, 3, 4.5]
+	long_rests = [4.5, 6.75, 10.125]
 
 	while SHOULD_CONTINUE:
 
@@ -169,8 +172,8 @@ def play_chords(session):
 			scamp.wait(wait_time)
 
 		except Exception as e:
-			print(e.__doc__)
-			print(e.message)		
+			print(e)
+		
 
 		#
 
@@ -185,8 +188,8 @@ def play_chords(session):
 			scamp.wait(wait_time)
 
 		except Exception as e:
-			print(e.__doc__)
-			print(e.message)	
+			print(e)
+	
 
 		#######################
 
@@ -201,8 +204,8 @@ def play_chords(session):
 			scamp.wait(wait_time)
 
 		except Exception as e:
-			print(e.__doc__)
-			print(e.message)	
+			print(e)
+
 
 		#
 
@@ -217,8 +220,8 @@ def play_chords(session):
 			scamp.wait(wait_time)
 
 		except Exception as e:
-			print(e.__doc__)
-			print(e.message)	
+			print(e)
+
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
