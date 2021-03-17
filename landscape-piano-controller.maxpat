@@ -134,9 +134,9 @@
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 416.5, 300.0, 173.0, 22.0 ],
+					"patching_rect" : [ 416.5, 300.0, 139.0, 22.0 ],
 					"style" : "",
-					"text" : "r landscape-piano-voice-target"
+					"text" : "r landscape-voice-target"
 				}
 
 			}
@@ -378,7 +378,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 386.0, 585.0, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "47 79"
+									"text" : "109 76"
 								}
 
 							}
@@ -456,7 +456,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 695.0, 475.0, 164.0, 22.0 ],
 									"style" : "",
-									"text" : "/piano1/end_note 47"
+									"text" : "/piano1/end_note 109"
 								}
 
 							}
@@ -638,7 +638,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 403.0, 111.0, 262.0, 22.0 ],
 									"style" : "",
-									"text" : "/piano1/end_note 47"
+									"text" : "/piano1/end_note 109"
 								}
 
 							}
