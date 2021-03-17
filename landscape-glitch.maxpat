@@ -38,6 +38,19 @@
 		"subpatcher_template" : "Alex-Template",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-12",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 215.0, 132.0, 63.0, 22.0 ],
+					"style" : "",
+					"text" : "r glitch-ps"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-9",
 					"maxclass" : "newobj",
 					"numinlets" : 0,
@@ -110,7 +123,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 284.0, 96.0, 82.0, 22.0 ],
 					"style" : "",
-					"text" : "loadmess 1.3"
+					"text" : "loadmess 1.1"
 				}
 
 			}
@@ -308,6 +321,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-21", 0 ],
 					"source" : [ "obj-11", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-10", 0 ],
+					"source" : [ "obj-12", 0 ]
 				}
 
 			}
