@@ -39,12 +39,15 @@ REST_MULTIPLIER_RATIO = 1.25
 REST_MULTIPLIER_MIN = 0.5
 REST_MULTIPLIER_MAX = 5.82
 
-API_CALL_WAIT_TIME_MIN = 40
+API_CALL_WAIT_TIME_MIN = 35
 API_CALL_WAIT_TIME_STD = 60
 API_CALL_WAIT_TIME_MAX = 9999
 
 API_KEY = open('landscape_config.txt', 'r').readlines()[0]
 API_VIDEO_ID = open('landscape_config.txt', 'r').readlines()[1]
+
+SHORT_RESTS = [2, 2.5, 3.125, 3.906]
+LONG_RESTS = [3.906, 3.906, 4.883, 4.883]
 
 SHOULD_CONTINUE = True
 
@@ -161,7 +164,7 @@ def update_parameters(session):
 		time_until_next_update = Utilities.clip(API_CALL_WAIT_TIME_STD / (REST_MULTIPLIER ** 0.33), 
 												API_CALL_WAIT_TIME_MIN, API_CALL_WAIT_TIME_MAX) 
 
-		print("***** Next API call in approx " + str(int(time_until_next_update)) + " seconds")
+		print("***** Next check in approx " + str(int(time_until_next_update)) + " seconds")
 		print("*********************************************************")
 
 		scamp.wait(time_until_next_update) # faster music stays around for longer
@@ -180,14 +183,16 @@ def jitter_pitches(pitches):
 
 	out = copy.deepcopy(pitches)
 
-	if random.choice([1]) == 1:
-		all_indices = list(range(0, len(pitches)))
+	if random.choice([0, 0, 1]) == 1:
+		all_indices = list(range(1, len(out))) # don't jitter pitch of index 0 (= fundamental)
 		nbr_indices_to_sample = Utilities.clip(random.choice([1, 2]), 1, len(all_indices))
 		chosen_indices = random.sample(all_indices, nbr_indices_to_sample)
 		for i in chosen_indices:
-			copied_pitch = copy.deepcopy(pitches[i])
-			copied_pitch.midi_number -= random.choice([12, 24, 36])
-			pitches[i] = copied_pitch
+			copied_pitch = copy.deepcopy(out[i])
+			copied_pitch.midi_number = Utilities.clip(copied_pitch.midi_number - 12,
+														21, 108)
+			out[i] = copied_pitch
+
 	return out
 
 
@@ -203,8 +208,11 @@ def get_midi_numbers_to_play(chords, chord_index_rg):
 	chosen_chord.sort_pitches_by_midi_number()
 
 	ocs = sorted(OVERTONE_CLASSES, reverse = True)[:Utilities.clip(random.choice([CHORD_DENSITY - 1, CHORD_DENSITY, CHORD_DENSITY + 1]), 1, 12)]
+
 	selected_pitches = jitter_pitches([p for p in chosen_chord.pitches if p.overtone_class in ocs])
-	print("----- Returning chord " + str(chord_index) + " with overtone classes " + str(sorted([p.overtone_class for p in selected_pitches])))
+
+	print("----- Returning chord " + str(chord_index) + " with overtone classes " + str(sorted([p.overtone_class for p in selected_pitches])) + 
+						", midi " + str([int(p.midi_number) for p in selected_pitches]))
 
 	return [p.midi_number for p in selected_pitches]
 
@@ -216,8 +224,11 @@ def play_chord_then_wait(inst, chords, chord_index_rg, rests, rest_index_rg):
 	"""
 
 	print("----- Getting chord for *** " + inst.name.upper() + " ***")
-	inst.play_note(0, 0.0, 1.0, blocking = False) # starts the envelope curve
-	inst.play_chord(get_midi_numbers_to_play(chords, chord_index_rg), 1.5, 1.0, blocking = False)
+
+	inst.play_chord(get_midi_numbers_to_play(chords, chord_index_rg), 1.5, 1.0, blocking = False) 	# this plays a very loud chord in Pianoteq
+
+	inst.play_note(0, 0.0, 1.0, blocking = False) 	# this tells Max to trigger the envelope on the output from Pianoteq
+												 	# (starts at zero gain and gradually fades in)
 
 	wait_time = rests[rest_index_rg.get_average_value()] * REST_MULTIPLIER
 	print("----- Waiting approx " + str(int(wait_time)) + " seconds")
@@ -230,12 +241,13 @@ def play_chords(session):
 	Main function for controlling the Max patch.
 	Loops until SHOULD_CONTINUE is set to False.
 	"""
+
 	piano1 = session.new_osc_part("piano 1", 7400, "127.0.0.1")
 	piano2 = session.new_osc_part("piano 2", 7401, "127.0.0.1")
 	piano3 = session.new_osc_part("piano 3", 7402, "127.0.0.1")
 	piano4 = session.new_osc_part("piano 4", 7403, "127.0.0.1")
 
-	target_incrementer = session.new_osc_part("target_incrementer", 7600, "127.0.0.1")
+	voice_target_incrementer = session.new_osc_part("voice_target_incrementer", 7600, "127.0.0.1")
 
 	chords = []
 	chords.append(Chord.from_string("27.0~27.0,1,1;55.0,5,1;58.0,3,1;61.0,7,1;76.0,17,1;78.0,19,1;81.0,11,1;84.0,27,1;86.0,15,1;89.0,9,1;92.0,21,1;95.0,13,1"))
@@ -251,33 +263,31 @@ def play_chords(session):
 	chords.append(Chord.from_string("29.0~29.0,1,1;60.0,3,1;63.0,7,1;67.0,9,1;69.0,5,1;73.0,13,1;76.0,15,1;78.0,17,1;82.0,21,1;86.0,27,1;92.0,19,1;95.0,11,1"))
 	chords.append(Chord.from_string("36.0~36.0,1,1;64.0,5,1;67.0,3,1;70.0,7,1;74.0,9,1;78.0,11,1;80.0,13,1;83.0,15,1;85.0,17,1;87.0,19,1;89.0,21,1;93.0,27,1"))
 
-	short_rests = [2, 2.5, 3.125, 3.906]
-	long_rests = [3.906, 3.906, 4.883, 4.883]
-
 	chord_index_rg = RandomizerGroup(nbr_randomizers = 4,
 									output_range = [0, len(chords) - 1],
 									ban_repeat_average_value = True,
 									seed_value = None)
 
 	rest_index_rg = RandomizerGroup(nbr_randomizers = 4,
-									output_range = [0, len(short_rests) - 1],
+									output_range = [0, len(SHORT_RESTS) - 1],
 									ban_repeat_average_value = False,
 									seed_value = None)
 
 	while SHOULD_CONTINUE:
 
-		target_incrementer.play_note(0, 0.0, 0.01)
+		# this is a phantom note sent on port 7600, used to tell the Max patch to increment the targeted poly~ voice by 1
+		voice_target_incrementer.play_note(0, 0.0, 0.01)
 
 		try: 
-			play_chord_then_wait(piano1, chords, chord_index_rg, short_rests, rest_index_rg)
-			play_chord_then_wait(piano2, chords, chord_index_rg, long_rests, rest_index_rg)
+			play_chord_then_wait(piano1, chords, chord_index_rg, SHORT_RESTS, rest_index_rg)
+			play_chord_then_wait(piano2, chords, chord_index_rg, LONG_RESTS, rest_index_rg)
 
 		except:
 			traceback.print_exception(*sys.exc_info())
 
 		try:
-			play_chord_then_wait(piano3, chords, chord_index_rg, short_rests, rest_index_rg)
-			play_chord_then_wait(piano4, chords, chord_index_rg, long_rests, rest_index_rg)
+			play_chord_then_wait(piano3, chords, chord_index_rg, SHORT_RESTS, rest_index_rg)
+			play_chord_then_wait(piano4, chords, chord_index_rg, LONG_RESTS, rest_index_rg)
 		except:
 			traceback.print_exception(*sys.exc_info())			
 
