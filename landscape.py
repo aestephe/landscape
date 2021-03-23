@@ -39,9 +39,7 @@ REST_MULTIPLIER_RATIO = 1.25
 REST_MULTIPLIER_MIN = 0.5
 REST_MULTIPLIER_MAX = 5.82
 
-API_CALL_WAIT_TIME_MIN = 35
-API_CALL_WAIT_TIME_STD = 60
-API_CALL_WAIT_TIME_MAX = 9999
+API_CALL_WAIT_TIME = 5
 
 API_KEY = open('landscape_config.txt', 'r').readlines()[0]
 API_VIDEO_ID = open('landscape_config.txt', 'r').readlines()[1]
@@ -109,7 +107,7 @@ def update_parameters(session):
 		# HACK... a very long silent note to nowhere ( without blocking )
 		# seems to (somewhat) prevent the SCAMP clock from getting upset that the YouTube API call takes a while
 		try:
-			foo.play_note(0, 0.0, API_CALL_WAIT_TIME_MIN, blocking = False) 
+			foo.play_note(0, 0.0, API_CALL_WAIT_TIME, blocking = False) 
 		except:
 			traceback.print_exception(*sys.exc_info())
 
@@ -161,8 +159,7 @@ def update_parameters(session):
 		print("***** New parameters:" + '\t' + str(VIEWERS) + '\t' + str(CHORD_DENSITY) + '\t' + str(REST_MULTIPLIER))
 
 		# fast music lasts a little bit longer
-		time_until_next_update = Utilities.clip(API_CALL_WAIT_TIME_STD / (REST_MULTIPLIER ** 0.33), 
-												API_CALL_WAIT_TIME_MIN, API_CALL_WAIT_TIME_MAX) 
+		time_until_next_update = API_CALL_WAIT_TIME
 
 		print("***** Next check in approx " + str(int(time_until_next_update)) + " seconds")
 		print("*********************************************************")
