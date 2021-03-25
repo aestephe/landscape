@@ -16,6 +16,7 @@ import sys
 import time
 import traceback
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # Global Variables
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -47,6 +48,10 @@ SHORT_RESTS = [2, 2.5, 3.125, 3.906]
 LONG_RESTS = [3.906, 3.906, 4.883, 4.883]
 
 SHOULD_CONTINUE = True
+
+PITCH_GLITCHER_STATE = False
+SPEED_JITTER_STATE = False
+
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # Parameter Updating
@@ -171,80 +176,38 @@ def update_parameters(session):
 
 		scamp.wait(time_until_next_update) # faster music stays around for longer
 
-# -------------------------------------------------------------------------------------------------------------------------------------------
-# Changing Max Patch Settings
-# -------------------------------------------------------------------------------------------------------------------------------------------
-
-def control_speed_jitter(session):
-
-	speed_jitter = session.new_osc_part("speed_jitter", 7800, "127.0.0.1")
-	speed_jitter_off = session.new_osc_part("speed_jitter_off", 7801, "127.0.0.1")
-
-	wait_time_rg = RandomizerGroup(nbr_randomizers = 3,
-									output_range = [5, 15],
-									ban_repeat_average_value = True,
-									seed_value = 10)
-
-	jitterable_mode = False
-
-	while SHOULD_CONTINUE:
-
-		# decide whether the jitterable mode state should change
-		# a change of state in either direction should be quite rare
-		if random.choice([0, 0, 0, 0, 0, 0, 1]) == 1:
-			if jitterable_mode:
-				jitterable_mode = False
-			else:
-				jitterable_mode = True
-
-		if jitterable_mode:
-			if random.choice([0, 0, 1]) == 1:
-				# tell Max to change the state of the speed jitter
-				speed_jitter.play_note(0, 0, 0.01)
-		else:
-			# make sure the jitter is off
-			speed_jitter_off.play_note(0, 0, 0.1)
-
-		scamp.wait(2 * wait_time_rg.get_average_value())
-
-def control_glitch(session):
-
-	glitch = session.new_osc_part("glitch", 7900, "127.0.0.1")
-	glitch_off = session.new_osc_part("glitch_off", 7901, "127.0.0.1")
-
-	wait_time_rg = RandomizerGroup(nbr_randomizers = 3,
-									output_range = [5, 15],
-									ban_repeat_average_value = True,
-									seed_value = 10)
-
-	jitterable_mode = False
-
-	while SHOULD_CONTINUE:
-
-		# decide whether the jitterable mode state should change
-		# False --> True should be quite rare, but True --> False should be more common
-		if not jitterable_mode and random.choice([0, 0, 0, 0, 0, 0, 1]) == 1:
-			jitterable_mode = True
-		elif jitterable_mode and random.choice([0, 0, 0, 0, 1]) == 1:
-			jitterable_mode = False
-
-		if jitterable_mode:
-			if random.choice([0, 0, 1]) == 1:
-				# tell Max to change the state of the glitcher
-				glitch.play_note(0, 0, 0.01)
-
-		else:
-			# make sure the glitcher is off
-			glitch_off.play_note(0, 0, 0.1)
-
-		scamp.wait(2 * wait_time_rg.get_average_value())
-
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
-# Playing Chords
+# Controlling the Max Patch
 # -------------------------------------------------------------------------------------------------------------------------------------------
 
-def jitter_pitches(pitches):
+def try_change_pitch_glitcher_state(inst):
+
+	global PITCH_GLITCHER_STATE
+
+	if PITCH_GLITCHER_STATE == False and random.choice([0, 0, 0, 0, 1]) == 1:
+		inst.play_note(0, 0, 0.1, blocking = False)
+		PITCH_GLITCHER_STATE = True
+
+	elif PITCH_GLITCHER_STATE == True and random.choice([0, 0, 0, 1]) == 1:
+		inst.play_note(0, 0, 0.1, blocking = False)
+		PITCH_GLITCHER_STATE = False
+
+
+def try_change_speed_jitter_state(inst):
+
+	global SPEED_JITTER_STATE
+
+	if SPEED_JITTER_STATE == False and random.choice([0, 0, 0, 0, 1]) == 1:
+		inst.play_note(0, 0, 0.1, blocking = False)
+		SPEED_JITTER_STATE = True
+
+	elif SPEED_JITTER_STATE == True and random.choice([0, 0, 0, 1]) == 1:
+		inst.play_note(0, 0, 0.1, blocking = False)
+		SPEED_JITTER_STATE = False
+
+
+def try_transpose_pitches(pitches):
 
 	"""
 	Based on random variables, change the octave(s) of a small number of pitches in a list
@@ -254,8 +217,11 @@ def jitter_pitches(pitches):
 	out = copy.deepcopy(pitches)
 
 	all_indices = list(range(1, len(out))) # lowest note in the chord can't be altered
-	nbr_indices_to_sample = Utilities.clip(random.choice([0, 1, 2, 3, 4, 5]), 1, len(all_indices) - 1)
-	chosen_indices = random.sample(all_indices, nbr_indices_to_sample)
+	nbr_indices_to_sample = Utilities.clip(random.choice([0, 1, 2, 3, 4, 5]), 0, len(all_indices))
+	if nbr_indices_to_sample > 0:
+		chosen_indices = random.sample(all_indices, nbr_indices_to_sample)
+	else:
+		chosen_indices = []
 	for i in chosen_indices:
 		copied_pitch = copy.deepcopy(out[i])
 		copied_pitch.midi_number = Utilities.clip(copied_pitch.midi_number + random.choice([12, -12, 24, -24, 36, -36]),
@@ -278,7 +244,7 @@ def get_midi_numbers_to_play(chords, chord_index_rg):
 
 	ocs = sorted(OVERTONE_CLASSES, reverse = True)[:Utilities.clip(random.choice([CHORD_DENSITY - 1, CHORD_DENSITY, CHORD_DENSITY + 1]), 1, 12)]
 
-	selected_pitches = jitter_pitches([p for p in chosen_chord.pitches if p.overtone_class in ocs])
+	selected_pitches = try_transpose_pitches([p for p in chosen_chord.pitches if p.overtone_class in ocs])
 
 	print("----- Returning chord " + str(chord_index) + " with overtone classes " + str(sorted([p.overtone_class for p in selected_pitches])) + 
 						", midi " + str([int(p.midi_number) for p in selected_pitches]))
@@ -286,7 +252,8 @@ def get_midi_numbers_to_play(chords, chord_index_rg):
 	return [p.midi_number for p in selected_pitches]
 
 
-def play_chord_then_wait(inst, chords, chord_index_rg, rests, rest_index_rg):
+def play_chord_then_wait(inst, chords, chord_index_rg, rests, rest_index_rg, 
+							pitch_glitcher_inst, speed_jitter_inst):
 
 	"""
 	Select and play a single chord, then wait.
@@ -297,7 +264,7 @@ def play_chord_then_wait(inst, chords, chord_index_rg, rests, rest_index_rg):
 	inst.play_chord(get_midi_numbers_to_play(chords, chord_index_rg), 1.5, 1.0, blocking = False) 	# this plays a very loud chord in Pianoteq
 
 	inst.play_note(0, 0.0, 1.0, blocking = False) 	# this tells Max to trigger the envelope on the output from Pianoteq
-												 	# (starts at zero gain and gradually fades in)
+													# (starts at zero gain and gradually fades in)
 
 	wait_time = rests[rest_index_rg.get_average_value()] * REST_MULTIPLIER
 	print("----- Waiting approx " + str(int(wait_time)) + " seconds")
@@ -315,6 +282,9 @@ def play_chords(session):
 	piano2 = session.new_osc_part("piano 2", 7401, "127.0.0.1")
 	piano3 = session.new_osc_part("piano 3", 7402, "127.0.0.1")
 	piano4 = session.new_osc_part("piano 4", 7403, "127.0.0.1")
+
+	pitch_glitcher_inst = session.new_osc_part("pitch_glitcher", 7800, "127.0.0.1")
+	speed_jitter_inst = session.new_osc_part("speed_jitter", 7900, "127.0.0.1")
 
 	voice_target_incrementer = session.new_osc_part("voice_target_incrementer", 7600, "127.0.0.1")
 
@@ -341,28 +311,76 @@ def play_chords(session):
 									output_range = [0, len(SHORT_RESTS) - 1],
 									ban_repeat_average_value = False,
 									seed_value = None)
+	i = 0
 
 	while SHOULD_CONTINUE:
+
+		i += 1
 
 		# this is a phantom note sent on port 7600, used to tell the Max patch to increment the targeted poly~ voice by 1
 		voice_target_incrementer.play_note(0, 0.0, 0.01)
 
+
 		try: 
-			play_chord_then_wait(piano1, chords, chord_index_rg, SHORT_RESTS, rest_index_rg)
-			play_chord_then_wait(piano2, chords, chord_index_rg, LONG_RESTS, rest_index_rg)
+			play_chord_then_wait(piano1, 
+								chords, 
+								chord_index_rg, 
+								SHORT_RESTS, 
+								rest_index_rg, 
+								pitch_glitcher_inst, 
+								speed_jitter_inst)
+		except:
+			traceback.print_exception(*sys.exc_info())
+
+
+		try:
+			play_chord_then_wait(piano2, 
+								chords, 
+								chord_index_rg, 
+								LONG_RESTS, 
+								rest_index_rg, 
+								pitch_glitcher_inst, 
+								speed_jitter_inst)
+		except:
+			traceback.print_exception(*sys.exc_info())				
+
+
+		try:
+			if i > 3:
+				# don't try to change these states in Max if we just started
+				try_change_pitch_glitcher_state(pitch_glitcher_inst)
+				try_change_speed_jitter_state(speed_jitter_inst)
 
 		except:
 			traceback.print_exception(*sys.exc_info())
 
+
 		try:
-			play_chord_then_wait(piano3, chords, chord_index_rg, SHORT_RESTS, rest_index_rg)
-			play_chord_then_wait(piano4, chords, chord_index_rg, LONG_RESTS, rest_index_rg)
+			play_chord_then_wait(piano3, 
+								chords, 
+								chord_index_rg, 
+								SHORT_RESTS, 
+								rest_index_rg, 
+								pitch_glitcher_inst, 
+								speed_jitter_inst)
+		except:
+			traceback.print_exception(*sys.exc_info())	
+
+
+		try:
+			play_chord_then_wait(piano4, 
+								chords, 
+								chord_index_rg, 
+								LONG_RESTS, 
+								rest_index_rg, 
+								pitch_glitcher_inst, 
+								speed_jitter_inst)
 		except:
 			traceback.print_exception(*sys.exc_info())			
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
-# Parent Code (starts the SCAMP session, then forks parameter updater and chord player)
+# Parent Code (starts the SCAMP session and forks functions)
 # -------------------------------------------------------------------------------------------------------------------------------------------
 
 s = scamp.Session()
@@ -371,11 +389,9 @@ s.tempo = 60
 
 # reset everything
 s.new_osc_part("master_reset", 7700, "127.0.0.1").play_note(0, 0.0, 0.01)
-s.wait(5)
+s.wait(1)
 
 s.fork(update_parameters, args = [s])
-s.fork(control_speed_jitter, args = [s])
-s.fork(control_glitch, args = [s])
 s.wait(1)
 s.fork(play_chords, args = [s])
 
