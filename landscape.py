@@ -4,19 +4,17 @@
 
 import copy
 from collections import OrderedDict
+from googleapiclient.discovery import build
 import os
+from pyalex.chord import Chord
+from pyalex.pitch import Pitch
+from pyalex.rand import RandomizerGroup
+from pyalex.utilities import Utilities
 import random
 import scamp
 import sys
 import time
 import traceback
-
-from googleapiclient.discovery import build
-
-from pyalex.chord import Chord
-from pyalex.pitch import Pitch
-from pyalex.rand import RandomizerGroup
-from pyalex.utilities import Utilities
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # Global Variables
@@ -24,10 +22,10 @@ from pyalex.utilities import Utilities
 
 OVERTONE_CLASSES = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 27]
 
+VIEWERS = None
+
 PARAM_FILE_NAME = "landscape_params.txt"
 PARAM_FILE_LAST_UPDATE = -1
-
-VIEWERS = None
 
 CHORD_DENSITY = None
 CHORD_DENSITY_INCREMENT = 1
@@ -39,10 +37,11 @@ REST_MULTIPLIER_RATIO = 1.25
 REST_MULTIPLIER_MIN = 0.5
 REST_MULTIPLIER_MAX = 5.82
 
-API_CALL_WAIT_TIME = 5
+CONFIG_FILE_NAME = "landscape_config.txt"
 
-API_KEY = open('landscape_config.txt', 'r').readlines()[0]
-API_VIDEO_ID = open('landscape_config.txt', 'r').readlines()[1]
+API_KEY = open(CONFIG_FILE_NAME, 'r').readlines()[0]
+API_VIDEO_ID = open(CONFIG_FILE_NAME, 'r').readlines()[1]
+API_CALL_BASE_WAIT_TIME = 10
 
 SHORT_RESTS = [2, 2.5, 3.125, 3.906]
 LONG_RESTS = [3.906, 3.906, 4.883, 4.883]
@@ -99,6 +98,11 @@ def update_parameters(session):
 	youtube = build("youtube", "v3", developerKey = API_KEY)
 	request = youtube.videos().list(part = "liveStreamingDetails",
 		       						id = API_VIDEO_ID)
+	iteration_options = [1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5]
+	iteration_options_index_rg = RandomizerGroup(nbr_randomizers = 2,
+									output_range = [0, len(iteration_options) - 1],
+									ban_repeat_average_value = True,
+									seed_value = 3)
 
 	foo = session.new_osc_part("foo", 9999, "127.0.0.1")
 
@@ -107,7 +111,7 @@ def update_parameters(session):
 		# HACK... a very long silent note to nowhere ( without blocking )
 		# seems to (somewhat) prevent the SCAMP clock from getting upset that the YouTube API call takes a while
 		try:
-			foo.play_note(0, 0.0, API_CALL_WAIT_TIME, blocking = False) 
+			foo.play_note(0, 0.0, 60, blocking = False) 
 		except:
 			traceback.print_exception(*sys.exc_info())
 
@@ -144,12 +148,14 @@ def update_parameters(session):
 					# update variables according to the viewer count
 					if current_viewers > VIEWERS:
 						# more viewers - decrease chord density, increase speed
-						CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY - CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
-						REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER / REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
+						for _ in range(0, iteration_options[iteration_options_index_rg.get_average_value()]):
+							CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY - CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
+							REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER / REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
 					elif current_viewers < VIEWERS:
 						# fewer viewers - increase chord density, decrease speed
-						CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY + CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
-						REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER * REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
+						for _ in range(0, iteration_options[iteration_options_index_rg.get_average_value()]):
+							CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY + CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
+							REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER * REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
 				
 			VIEWERS = current_viewers
 
@@ -158,17 +164,84 @@ def update_parameters(session):
 
 		print("***** New parameters:" + '\t' + str(VIEWERS) + '\t' + str(CHORD_DENSITY) + '\t' + str(REST_MULTIPLIER))
 
-		# fast music lasts a little bit longer
-		time_until_next_update = API_CALL_WAIT_TIME
+		time_until_next_update = (API_CALL_BASE_WAIT_TIME * REST_MULTIPLIER) / ((REST_MULTIPLIER / REST_MULTIPLIER_MAX) ** 0.3)
 
 		print("***** Next check in approx " + str(int(time_until_next_update)) + " seconds")
 		print("*********************************************************")
 
 		scamp.wait(time_until_next_update) # faster music stays around for longer
 
+# -------------------------------------------------------------------------------------------------------------------------------------------
+# Changing Max Patch Settings
+# -------------------------------------------------------------------------------------------------------------------------------------------
+
+def control_speed_jitter(session):
+
+	speed_jitter = session.new_osc_part("speed_jitter", 7800, "127.0.0.1")
+	speed_jitter_off = session.new_osc_part("speed_jitter_off", 7801, "127.0.0.1")
+
+	wait_time_rg = RandomizerGroup(nbr_randomizers = 3,
+									output_range = [5, 15],
+									ban_repeat_average_value = True,
+									seed_value = 10)
+
+	jitterable_mode = False
+
+	while SHOULD_CONTINUE:
+
+		# decide whether the jitterable mode state should change
+		# a change of state in either direction should be quite rare
+		if random.choice([0, 0, 0, 0, 0, 0, 1]) == 1:
+			if jitterable_mode:
+				jitterable_mode = False
+			else:
+				jitterable_mode = True
+
+		if jitterable_mode:
+			if random.choice([0, 0, 1]) == 1:
+				# tell Max to change the state of the speed jitter
+				speed_jitter.play_note(0, 0, 0.01)
+		else:
+			# make sure the jitter is off
+			speed_jitter_off.play_note(0, 0, 0.1)
+
+		scamp.wait(2 * wait_time_rg.get_average_value())
+
+def control_glitch(session):
+
+	glitch = session.new_osc_part("glitch", 7900, "127.0.0.1")
+	glitch_off = session.new_osc_part("glitch_off", 7901, "127.0.0.1")
+
+	wait_time_rg = RandomizerGroup(nbr_randomizers = 3,
+									output_range = [5, 15],
+									ban_repeat_average_value = True,
+									seed_value = 10)
+
+	jitterable_mode = False
+
+	while SHOULD_CONTINUE:
+
+		# decide whether the jitterable mode state should change
+		# False --> True should be quite rare, but True --> False should be more common
+		if not jitterable_mode and random.choice([0, 0, 0, 0, 0, 0, 1]) == 1:
+			jitterable_mode = True
+		elif jitterable_mode and random.choice([0, 0, 0, 0, 1]):
+			jitterable_mode = False
+
+		if jitterable_mode:
+			if random.choice([0, 0, 1]) == 1:
+				# tell Max to change the state of the glitcher
+				glitch.play_note(0, 0, 0.01)
+
+		else:
+			# make sure the glitcher is off
+			glitch_off.play_note(0, 0, 0.1)
+
+		scamp.wait(2 * wait_time_rg.get_average_value())
+
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
-# Controlling the Max Patch
+# Playing Chords
 # -------------------------------------------------------------------------------------------------------------------------------------------
 
 def jitter_pitches(pitches):
@@ -180,15 +253,14 @@ def jitter_pitches(pitches):
 
 	out = copy.deepcopy(pitches)
 
-	if random.choice([0, 0, 1]) == 1:
-		all_indices = list(range(1, len(out))) # don't jitter pitch of index 0 (= fundamental)
-		nbr_indices_to_sample = Utilities.clip(random.choice([1, 2]), 1, len(all_indices))
-		chosen_indices = random.sample(all_indices, nbr_indices_to_sample)
-		for i in chosen_indices:
-			copied_pitch = copy.deepcopy(out[i])
-			copied_pitch.midi_number = Utilities.clip(copied_pitch.midi_number - 12,
-														21, 108)
-			out[i] = copied_pitch
+	all_indices = list(range(1, len(out))) # lowest note in the chord can't be altered
+	nbr_indices_to_sample = Utilities.clip(random.choice([0, 1, 2, 3, 4, 5]), 1, len(all_indices) - 1)
+	chosen_indices = random.sample(all_indices, nbr_indices_to_sample)
+	for i in chosen_indices:
+		copied_pitch = copy.deepcopy(out[i])
+		copied_pitch.midi_number = Utilities.clip(copied_pitch.midi_number + random.choice([12, -12, 24, -24, 36, -36]),
+													21, 108)
+		out[i] = copied_pitch
 
 	return out
 
@@ -299,14 +371,12 @@ s.tempo = 60
 
 # reset everything
 s.new_osc_part("master_reset", 7700, "127.0.0.1").play_note(0, 0.0, 0.01)
-s.wait(1)
+s.wait(5)
 
 s.fork(update_parameters, args = [s])
+s.fork(control_speed_jitter, args = [s])
+s.fork(control_glitch, args = [s])
 s.wait(1)
 s.fork(play_chords, args = [s])
 
 s.wait_forever()
-
-print("ending now")
-SHOULD_CONTINUE = False
-s.wait_for_children_to_finish()
