@@ -225,7 +225,7 @@ def control_glitch(session):
 		# False --> True should be quite rare, but True --> False should be more common
 		if not jitterable_mode and random.choice([0, 0, 0, 0, 0, 0, 1]) == 1:
 			jitterable_mode = True
-		elif jitterable_mode and random.choice([0, 0, 0, 0, 1]):
+		elif jitterable_mode and random.choice([0, 0, 0, 0, 1]) == 1:
 			jitterable_mode = False
 
 		if jitterable_mode:
