@@ -28,12 +28,12 @@ VIEWERS = None
 PARAM_FILE_NAME = "landscape_params.txt"
 PARAM_FILE_LAST_UPDATE = -1
 
-CHORD_DENSITY = None
+CHORD_DENSITY = 1
 CHORD_DENSITY_INCREMENT = 1
 CHORD_DENSITY_MIN = 1
 CHORD_DENSITY_MAX = 12
 
-REST_MULTIPLIER = None
+REST_MULTIPLIER = 1
 REST_MULTIPLIER_RATIO = 1.25
 REST_MULTIPLIER_MIN = 0.5
 REST_MULTIPLIER_MAX = 5.82
@@ -50,8 +50,9 @@ LONG_RESTS = [3.906, 3.906, 4.883, 4.883]
 SHOULD_CONTINUE = True
 
 PITCH_GLITCHER_STATE = False
+PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE = 0
 SPEED_JITTER_STATE = False
-
+SPEED_JITTER_CALLS_SINCE_LAST_CHANGE = 0
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # Parameter Updating
@@ -183,29 +184,60 @@ def update_parameters(session):
 
 def try_change_pitch_glitcher_state(inst):
 
-	global PITCH_GLITCHER_STATE
+	"""
+	Decides whether to instruct Max to change the state of the pitch glitching process.
+	"""
 
-	if PITCH_GLITCHER_STATE == False and random.choice([0, 0, 0, 0, 1]) == 1:
+	global PITCH_GLITCHER_STATE, PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE
+
+	if (PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE > 3 
+			and PITCH_GLITCHER_STATE == False
+			and random.choice([0, 0, 0, 0, 1]) == 1):
+
 		inst.play_note(0, 0, 0.1, blocking = False)
 		PITCH_GLITCHER_STATE = True
+		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE = 0
 
-	elif PITCH_GLITCHER_STATE == True and random.choice([0, 0, 0, 1]) == 1:
+	elif (PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE > 1 
+			and PITCH_GLITCHER_STATE == True 
+			and random.choice([0, 0, 0, 1]) == 1):
+
 		inst.play_note(0, 0, 0.1, blocking = False)
 		PITCH_GLITCHER_STATE = False
+		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE = 0
+
+	else:
+
+		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE += 1
 
 
 def try_change_speed_jitter_state(inst):
 
-	global SPEED_JITTER_STATE
+	"""
+	Decides whether to instruct Max to change the state of the spat~ speed jitter process.
+	"""
 
-	if SPEED_JITTER_STATE == False and random.choice([0, 0, 0, 0, 1]) == 1:
+	global SPEED_JITTER_STATE, SPEED_JITTER_CALLS_SINCE_LAST_CHANGE
+
+	if (SPEED_JITTER_CALLS_SINCE_LAST_CHANGE > 2 
+			and SPEED_JITTER_STATE == False 
+			and random.choice([0, 0, 0, 0, 1]) == 1):
+
 		inst.play_note(0, 0, 0.1, blocking = False)
 		SPEED_JITTER_STATE = True
+		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE = 0
 
-	elif SPEED_JITTER_STATE == True and random.choice([0, 0, 0, 1]) == 1:
+	elif (SPEED_JITTER_CALLS_SINCE_LAST_CHANGE > 2 
+			and SPEED_JITTER_STATE == True 
+			and random.choice([0, 0, 0, 1]) == 1):
+
 		inst.play_note(0, 0, 0.1, blocking = False)
 		SPEED_JITTER_STATE = False
+		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE = 0
 
+	else:
+
+		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE += 1
 
 def try_transpose_pitches(pitches):
 
@@ -311,14 +343,17 @@ def play_chords(session):
 									output_range = [0, len(SHORT_RESTS) - 1],
 									ban_repeat_average_value = False,
 									seed_value = None)
-	i = 0
-
+	
 	while SHOULD_CONTINUE:
-
-		i += 1
 
 		# this is a phantom note sent on port 7600, used to tell the Max patch to increment the targeted poly~ voice by 1
 		voice_target_incrementer.play_note(0, 0.0, 0.01)
+
+
+		try:
+			try_change_speed_jitter_state(speed_jitter_inst)
+		except:
+			traceback.print_exception(*sys.exc_info())
 
 
 		try: 
@@ -346,11 +381,7 @@ def play_chords(session):
 
 
 		try:
-			if i > 3:
-				# don't try to change these states in Max if we just started
-				try_change_pitch_glitcher_state(pitch_glitcher_inst)
-				try_change_speed_jitter_state(speed_jitter_inst)
-
+			try_change_pitch_glitcher_state(pitch_glitcher_inst)
 		except:
 			traceback.print_exception(*sys.exc_info())
 
@@ -391,8 +422,8 @@ s.tempo = 60
 s.new_osc_part("master_reset", 7700, "127.0.0.1").play_note(0, 0.0, 0.01)
 s.wait(1)
 
+# fork the functions
 s.fork(update_parameters, args = [s])
-s.wait(1)
 s.fork(play_chords, args = [s])
 
 s.wait_forever()
