@@ -110,7 +110,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 555.333374000000049, 325.0, 50.0, 22.0 ],
-					"text" : "4 1 1"
+					"text" : "1 1 1"
 				}
 
 			}
@@ -302,7 +302,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 679.333374000000049, 519.0, 69.0, 22.0 ],
-					"text" : "0. 1500 0.6"
+					"text" : "0. 1500 0.3"
 				}
 
 			}
@@ -456,7 +456,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 74.5, 30.0, 236.0, 22.0 ],
-					"text" : "midi midievent 144 87 0"
+					"text" : "midi midievent 144 90 0"
 				}
 
 			}
