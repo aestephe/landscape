@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 590.0, 272.0, 759.0, 564.0 ],
+		"rect" : [ 667.0, 102.0, 759.0, 564.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -55,7 +55,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 168.0, 79.0, 703.0, 290.0 ],
+						"rect" : [ 568.0, 79.0, 703.0, 290.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -83,6 +83,7 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-3",
@@ -102,8 +103,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 135.0, 99.0, 491.0, 22.0 ],
-									"text" : "open /Users/aes/Documents/Workspace/GitHub/landscape/out/landscape.20210325.9.wav"
+									"patching_rect" : [ 135.0, 99.0, 498.0, 22.0 ],
+									"text" : "open /Users/aes/Documents/Workspace/GitHub/landscape/out/landscape.20210325.19.wav"
 								}
 
 							}
@@ -732,7 +733,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 954.0, 443.0, 1145.0, 428.0 ],
+						"rect" : [ 261.0, 267.0, 1145.0, 428.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1073,7 +1074,7 @@
 										}
 ,
 										"classnamespace" : "box",
-										"rect" : [ 1317.0, 163.0, 640.0, 632.0 ],
+										"rect" : [ 766.0, 122.0, 640.0, 632.0 ],
 										"bglocked" : 0,
 										"openinpresentation" : 0,
 										"default_fontsize" : 12.0,
@@ -1101,6 +1102,7 @@
 										"style" : "",
 										"subpatcher_template" : "Alex-Template",
 										"assistshowspatchername" : 0,
+										"visible" : 1,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-6",
@@ -3906,7 +3908,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 1102.0, 229.0, 784.0, 555.0 ],
+						"rect" : [ 622.0, 229.0, 784.0, 555.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -4859,7 +4861,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 24.0, 423.0, 1440.0, 579.0 ],
+						"rect" : [ 34.0, 514.0, 1440.0, 579.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -4905,7 +4907,7 @@
 										}
 ,
 										"classnamespace" : "box",
-										"rect" : [ 699.0, 280.0, 640.0, 480.0 ],
+										"rect" : [ 259.0, 275.0, 640.0, 480.0 ],
 										"bglocked" : 0,
 										"openinpresentation" : 0,
 										"default_fontsize" : 12.0,
@@ -9123,14 +9125,14 @@
 		"dependency_cache" : [ 			{
 				"name" : "spat.multioutputs~.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/ircam-spat/patchers",
-				"patcherrelativepath" : "../../../Max 8/Packages/ircam-spat/patchers",
+				"patcherrelativepath" : "../../../../Max 8/Packages/ircam-spat/patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "spat.monitor.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/ircam-spat/patchers",
-				"patcherrelativepath" : "../../../Max 8/Packages/ircam-spat/patchers",
+				"patcherrelativepath" : "../../../../Max 8/Packages/ircam-spat/patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
@@ -9143,20 +9145,20 @@
 , 			{
 				"name" : "spat.hrtf.selection.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/ircam-spat/patchers",
-				"patcherrelativepath" : "../../../Max 8/Packages/ircam-spat/patchers",
+				"patcherrelativepath" : "../../../../Max 8/Packages/ircam-spat/patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "spat.around.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/ircam-spat/patchers",
-				"patcherrelativepath" : "../../../Max 8/Packages/ircam-spat/patchers",
+				"patcherrelativepath" : "../../../../Max 8/Packages/ircam-spat/patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "landscape-piano.maxpat",
-				"bootpath" : "~/Documents/Workspace/GitHub/landscape",
+				"bootpath" : "~/Documents/Workspace/GitHub/landscape/max",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
@@ -9164,20 +9166,20 @@
 , 			{
 				"name" : "Pianoteq 5.maxsnap",
 				"bootpath" : "~/Documents/Max 8/Snapshots",
-				"patcherrelativepath" : "../../../Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Max 8/Snapshots",
 				"type" : "mx@s",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "landscape-piano-controller.maxpat",
-				"bootpath" : "~/Documents/Workspace/GitHub/landscape",
+				"bootpath" : "~/Documents/Workspace/GitHub/landscape/max",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "landscape-glitch.maxpat",
-				"bootpath" : "~/Documents/Workspace/GitHub/landscape",
+				"bootpath" : "~/Documents/Workspace/GitHub/landscape/max",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
@@ -9185,21 +9187,21 @@
 , 			{
 				"name" : "pitch-stutter~.maxpat",
 				"bootpath" : "~/Documents/Max 8/Library/CNMAT-MMJ-Depot/patchers/effects_audio",
-				"patcherrelativepath" : "../../../Max 8/Library/CNMAT-MMJ-Depot/patchers/effects_audio",
+				"patcherrelativepath" : "../../../../Max 8/Library/CNMAT-MMJ-Depot/patchers/effects_audio",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "uc_disclaimer.maxpat",
 				"bootpath" : "~/Documents/Max 8/Library/CNMAT-MMJ-Depot/patchers/depot_support",
-				"patcherrelativepath" : "../../../Max 8/Library/CNMAT-MMJ-Depot/patchers/depot_support",
+				"patcherrelativepath" : "../../../../Max 8/Library/CNMAT-MMJ-Depot/patchers/depot_support",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "cnmat_blue.gif",
 				"bootpath" : "~/Documents/Max 8/Library/CNMAT-MMJ-Depot/media/Images",
-				"patcherrelativepath" : "../../../Max 8/Library/CNMAT-MMJ-Depot/media/Images",
+				"patcherrelativepath" : "../../../../Max 8/Library/CNMAT-MMJ-Depot/media/Images",
 				"type" : "GIFf",
 				"implicit" : 1
 			}
