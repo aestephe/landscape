@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 667.0, 102.0, 759.0, 564.0 ],
+		"rect" : [ 93.0, 354.0, 759.0, 564.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -55,7 +55,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 568.0, 79.0, 703.0, 290.0 ],
+						"rect" : [ 568.0, 259.0, 703.0, 290.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -103,8 +103,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 135.0, 99.0, 498.0, 22.0 ],
-									"text" : "open /Users/aes/Documents/Workspace/GitHub/landscape/out/landscape.20210325.19.wav"
+									"patching_rect" : [ 135.0, 99.0, 491.0, 22.0 ],
+									"text" : "open /Users/aes/Documents/Workspace/GitHub/landscape/out/landscape.20210326.1.wav"
 								}
 
 							}
@@ -1102,7 +1102,6 @@
 										"style" : "",
 										"subpatcher_template" : "Alex-Template",
 										"assistshowspatchername" : 0,
-										"visible" : 1,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-6",

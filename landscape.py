@@ -169,7 +169,7 @@ def update_parameters(session):
 		except:
 			traceback.print_exception(*sys.exc_info())
 
-		print("***** New parameters:" + '\t' + str(VIEWERS) + '\t' + str(CHORD_DENSITY) + '\t' + str(REST_MULTIPLIER))
+		print("***** New parameters:" + '\t' + str(CHORD_DENSITY) + '\t' + str(REST_MULTIPLIER))
 
 		time_until_next_update = (API_CALL_BASE_WAIT_TIME * REST_MULTIPLIER) / ((REST_MULTIPLIER / REST_MULTIPLIER_MAX) ** 0.3)
 
@@ -191,27 +191,35 @@ def try_change_pitch_glitcher_state(inst):
 
 	global PITCH_GLITCHER_STATE, PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE
 
-	if (PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE >= 3
-			and PITCH_GLITCHER_STATE == False
+	rest_multiplier_cpu_limit = 1.0 # to help save CPU in Max
+
+	if (PITCH_GLITCHER_STATE == False
+			and PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE >= 3
 			and random.choice([0, 0, 0, 0, 1]) == 1
-			and REST_MULTIPLIER >= 1.0): # to save cpu
+			and REST_MULTIPLIER >= rest_multiplier_cpu_limit):
+
 		inst.play_note(0, 0, 0.1, blocking = False)
 		PITCH_GLITCHER_STATE = True
 		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE = 0
-	elif (PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE >= 1 
-			and PITCH_GLITCHER_STATE == True 
+
+	elif (PITCH_GLITCHER_STATE == True   
+			and PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE >= 1
 			and random.choice([0, 0, 0, 1]) == 1):
+
 		inst.play_note(0, 0, 0.1, blocking = False)
 		PITCH_GLITCHER_STATE = False
 		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE = 0
-	else:
-		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE += 1
 
-	# to save cpu 
-	if PITCH_GLITCHER_STATE == True and REST_MULTIPLIER < 1.0:
+	elif (PITCH_GLITCHER_STATE == True 
+			and REST_MULTIPLIER < rest_multiplier_cpu_limit):
+
 		inst.play_note(0, 0, 0.1, blocking = False)
 		PITCH_GLITCHER_STATE = False		
 		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE = 0
+
+	else:
+
+		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE += 1
 
 
 def try_change_speed_jitter_state(inst):
@@ -222,27 +230,35 @@ def try_change_speed_jitter_state(inst):
 
 	global SPEED_JITTER_STATE, SPEED_JITTER_CALLS_SINCE_LAST_CHANGE
 
-	if (SPEED_JITTER_CALLS_SINCE_LAST_CHANGE >= 2 
-			and SPEED_JITTER_STATE == False 
+	rest_multiplier_cpu_limit = 1.7  # to help save CPU in Max
+
+	if (SPEED_JITTER_STATE == False 
+			and SPEED_JITTER_CALLS_SINCE_LAST_CHANGE >= 2 
 			and random.choice([0, 0, 0, 0, 1]) == 1
-			and REST_MULTIPLIER >= 1.7): # to save cpu
+			and REST_MULTIPLIER >= rest_multiplier_cpu_limit):
+
 		inst.play_note(0, 0, 0.1, blocking = False)
 		SPEED_JITTER_STATE = True
 		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE = 0
-	elif (SPEED_JITTER_CALLS_SINCE_LAST_CHANGE >= 2 
-			and SPEED_JITTER_STATE == True 
+	
+	elif (SPEED_JITTER_STATE == True 
+			and SPEED_JITTER_CALLS_SINCE_LAST_CHANGE >= 2
 			and random.choice([0, 0, 0, 1]) == 1):
+
 		inst.play_note(0, 0, 0.1, blocking = False)
 		SPEED_JITTER_STATE = False
 		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE = 0
-	else:
-		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE += 1
+	
+	elif (SPEED_JITTER_STATE == True 
+			and REST_MULTIPLIER < rest_multiplier_cpu_limit):
 
-	# to save cpu 
-	if SPEED_JITTER_STATE == True and REST_MULTIPLIER < 1.7:
 		inst.play_note(0, 0, 0.1, blocking = False)
 		SPEED_JITTER_STATE = False		
 		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE = 0
+	
+	else:
+
+		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE += 1
 
 
 def try_transpose_pitches(pitches):
@@ -262,8 +278,11 @@ def try_transpose_pitches(pitches):
 		chosen_indices = []
 	for i in chosen_indices:
 		copied_pitch = copy.deepcopy(out[i])
-		copied_pitch.midi_number = Utilities.clip(copied_pitch.midi_number + random.choice([12, -12, -24]),
-													21, 108)
+		copied_pitch.midi_number = Utilities.clip_and_wrap(
+									value = copied_pitch.midi_number + random.choice([12, -12, 24, -24, 36, -36]),
+									minimum = 21, 
+									maximum = 108,
+									wrap_value = 12)
 		out[i] = copied_pitch
 
 	return out
@@ -421,9 +440,8 @@ def play_chords(session):
 # Parent Code (starts the SCAMP session and forks functions)
 # -------------------------------------------------------------------------------------------------------------------------------------------
 
-s = scamp.Session()
-scamp.current_clock().synchronization_policy = "no synchronization"
-s.tempo = 60
+s = scamp.Session(tempo = 60)
+s.synchronization_policy = "no synchronization"
 
 # reset everything
 s.new_osc_part("master_reset", 7700, "127.0.0.1").play_note(0, 0.0, 0.01)
