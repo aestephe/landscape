@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 93.0, 354.0, 759.0, 564.0 ],
+		"rect" : [ 582.0, 189.0, 759.0, 564.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -3412,7 +3412,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
-									"outlettype" : [ "signal" ],
+									"outlettype" : [ "" ],
 									"patching_rect" : [ 999.0, 253.0, 97.0, 22.0 ],
 									"text" : "landscape-glitch"
 								}
@@ -3459,7 +3459,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
-									"outlettype" : [ "signal" ],
+									"outlettype" : [ "" ],
 									"patching_rect" : [ 673.0, 253.0, 97.0, 22.0 ],
 									"text" : "landscape-glitch"
 								}
@@ -3506,7 +3506,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
-									"outlettype" : [ "signal" ],
+									"outlettype" : [ "" ],
 									"patching_rect" : [ 373.0, 253.0, 97.0, 22.0 ],
 									"text" : "landscape-glitch"
 								}
@@ -3553,7 +3553,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
-									"outlettype" : [ "signal" ],
+									"outlettype" : [ "" ],
 									"patching_rect" : [ 94.0, 253.0, 97.0, 22.0 ],
 									"text" : "landscape-glitch"
 								}
@@ -3935,6 +3935,7 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-11",
@@ -4860,7 +4861,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 34.0, 514.0, 1440.0, 579.0 ],
+						"rect" : [ 250.0, 312.0, 1440.0, 579.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -8608,6 +8609,7 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-7",
@@ -8627,7 +8629,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 232.0, 174.5, 83.0, 22.0 ],
+									"patching_rect" : [ 282.0, 192.5, 83.0, 22.0 ],
 									"text" : "Impedance 1."
 								}
 
@@ -8639,7 +8641,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 217.0, 130.5, 120.0, 22.0 ],
+									"patching_rect" : [ 217.0, 130.5, 118.0, 22.0 ],
 									"text" : "\"Direct Sound Du\" 1."
 								}
 
@@ -8663,7 +8665,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 97.0, 230.5, 61.0, 22.0 ],
+									"patching_rect" : [ 150.0, 248.5, 59.0, 22.0 ],
 									"text" : "Sympa 1."
 								}
 
@@ -8688,7 +8690,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 76.5, 202.5, 106.0, 22.0 ],
+									"patching_rect" : [ 76.5, 202.5, 104.0, 22.0 ],
 									"text" : "\"Hard. Forte\" 0.45"
 								}
 
@@ -8700,7 +8702,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 76.5, 178.5, 114.0, 22.0 ],
+									"patching_rect" : [ 76.5, 178.5, 112.0, 22.0 ],
 									"text" : "\"Hard. Mezzo\" 0.45"
 								}
 
@@ -8712,7 +8714,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 74.5, 154.5, 102.0, 22.0 ],
+									"patching_rect" : [ 74.5, 154.5, 100.0, 22.0 ],
 									"text" : "\"Hard. Piano\" 0.4"
 								}
 
@@ -8926,7 +8928,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 38.0, 30.0, 102.0, 22.0 ],
+					"patching_rect" : [ 38.0, 30.0, 100.0, 22.0 ],
 					"text" : "plug \"Pianoteq 5\""
 				}
 
@@ -9163,13 +9165,6 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "Pianoteq 5.maxsnap",
-				"bootpath" : "~/Documents/Max 8/Snapshots",
-				"patcherrelativepath" : "../../../../Max 8/Snapshots",
-				"type" : "mx@s",
-				"implicit" : 1
-			}
-, 			{
 				"name" : "landscape-piano-controller.maxpat",
 				"bootpath" : "~/Documents/Workspace/GitHub/landscape/max",
 				"patcherrelativepath" : ".",
@@ -9181,27 +9176,6 @@
 				"bootpath" : "~/Documents/Workspace/GitHub/landscape/max",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "pitch-stutter~.maxpat",
-				"bootpath" : "~/Documents/Max 8/Library/CNMAT-MMJ-Depot/patchers/effects_audio",
-				"patcherrelativepath" : "../../../../Max 8/Library/CNMAT-MMJ-Depot/patchers/effects_audio",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "uc_disclaimer.maxpat",
-				"bootpath" : "~/Documents/Max 8/Library/CNMAT-MMJ-Depot/patchers/depot_support",
-				"patcherrelativepath" : "../../../../Max 8/Library/CNMAT-MMJ-Depot/patchers/depot_support",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "cnmat_blue.gif",
-				"bootpath" : "~/Documents/Max 8/Library/CNMAT-MMJ-Depot/media/Images",
-				"patcherrelativepath" : "../../../../Max 8/Library/CNMAT-MMJ-Depot/media/Images",
-				"type" : "GIFf",
 				"implicit" : 1
 			}
 , 			{
@@ -9226,10 +9200,6 @@
 			}
 , 			{
 				"name" : "spat.oper.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "o.route.mxo",
 				"type" : "iLaX"
 			}
  ],

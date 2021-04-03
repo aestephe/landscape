@@ -111,16 +111,7 @@ def update_parameters(session):
 									ban_repeat_average_value = True,
 									seed_value = 3)
 
-	foo = session.new_osc_part("foo", 9999, "127.0.0.1")
-
 	while SHOULD_CONTINUE:
-
-		# HACK... a very long silent note to nowhere ( without blocking )
-		# seems to (somewhat) prevent the SCAMP clock from getting upset that the YouTube API call takes a while
-		try:
-			foo.play_note(0, 0.0, 60, blocking = False) 
-		except:
-			traceback.print_exception(*sys.exc_info())
 
 		print("*********************************************************")
 
@@ -448,7 +439,7 @@ s.new_osc_part("master_reset", 7700, "127.0.0.1").play_note(0, 0.0, 0.01)
 s.wait(1)
 
 # fork the functions
-s.fork(update_parameters, args = [s])
+s.fork_unsynchronized(update_parameters, args = [s])
 s.fork(play_chords, args = [s])
 
 s.wait_forever()
