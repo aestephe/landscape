@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 582.0, 189.0, 759.0, 564.0 ],
+		"rect" : [ 841.0, 241.0, 759.0, 564.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,30 @@
 		"subpatcher_template" : "Alex-Template",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-8",
+					"maxclass" : "number",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 307.0, 224.0, 50.0, 22.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 307.0, 195.0, 137.0, 22.0 ],
+					"text" : "r landscape-voice-target"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-14",
 					"maxclass" : "newobj",
@@ -83,7 +107,6 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-3",
@@ -221,7 +244,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 157.0, 224.0, 50.0, 22.0 ]
+					"patching_rect" : [ 148.0, 224.0, 50.0, 22.0 ]
 				}
 
 			}
@@ -232,7 +255,7 @@
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 157.0, 195.0, 147.0, 22.0 ],
+					"patching_rect" : [ 148.0, 195.0, 147.0, 22.0 ],
 					"text" : "r landscape-current-piano"
 				}
 
@@ -3412,7 +3435,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
-									"outlettype" : [ "" ],
+									"outlettype" : [ "signal" ],
 									"patching_rect" : [ 999.0, 253.0, 97.0, 22.0 ],
 									"text" : "landscape-glitch"
 								}
@@ -3459,7 +3482,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
-									"outlettype" : [ "" ],
+									"outlettype" : [ "signal" ],
 									"patching_rect" : [ 673.0, 253.0, 97.0, 22.0 ],
 									"text" : "landscape-glitch"
 								}
@@ -3506,7 +3529,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
-									"outlettype" : [ "" ],
+									"outlettype" : [ "signal" ],
 									"patching_rect" : [ 373.0, 253.0, 97.0, 22.0 ],
 									"text" : "landscape-glitch"
 								}
@@ -3553,7 +3576,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
-									"outlettype" : [ "" ],
+									"outlettype" : [ "signal" ],
 									"patching_rect" : [ 94.0, 253.0, 97.0, 22.0 ],
 									"text" : "landscape-glitch"
 								}
@@ -3935,7 +3958,6 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-11",
@@ -8609,7 +8631,6 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-7",
@@ -8976,6 +8997,13 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-8", 0 ],
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-14", 1 ],
 					"order" : 0,
 					"source" : [ "obj-22", 2 ]
@@ -9179,6 +9207,27 @@
 				"implicit" : 1
 			}
 , 			{
+				"name" : "pitch-stutter~.maxpat",
+				"bootpath" : "~/Documents/Max 8/Library/CNMAT-MMJ-Depot/patchers/effects_audio",
+				"patcherrelativepath" : "../../../../Max 8/Library/CNMAT-MMJ-Depot/patchers/effects_audio",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "uc_disclaimer.maxpat",
+				"bootpath" : "~/Documents/Max 8/Library/CNMAT-MMJ-Depot/patchers/depot_support",
+				"patcherrelativepath" : "../../../../Max 8/Library/CNMAT-MMJ-Depot/patchers/depot_support",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "cnmat_blue.gif",
+				"bootpath" : "~/Documents/Max 8/Library/CNMAT-MMJ-Depot/media/Images",
+				"patcherrelativepath" : "../../../../Max 8/Library/CNMAT-MMJ-Depot/media/Images",
+				"type" : "GIFf",
+				"implicit" : 1
+			}
+, 			{
 				"name" : "spat.rms~.mxo",
 				"type" : "iLaX"
 			}
@@ -9200,6 +9249,10 @@
 			}
 , 			{
 				"name" : "spat.oper.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "o.route.mxo",
 				"type" : "iLaX"
 			}
  ],
