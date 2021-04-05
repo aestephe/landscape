@@ -182,12 +182,9 @@ def try_change_pitch_glitcher_state(inst):
 
 	global PITCH_GLITCHER_STATE, PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE
 
-	rest_multiplier_cpu_limit = 1.0 # to help save CPU in Max
-
 	if (PITCH_GLITCHER_STATE == False
 			and PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE >= 3
-			and random.choice([0, 0, 0, 0, 1]) == 1
-			and REST_MULTIPLIER >= rest_multiplier_cpu_limit):
+			and random.choice([0, 0, 0, 0, 1]) == 1):
 
 		inst.play_note(0, 0, 0.1, blocking = False)
 		PITCH_GLITCHER_STATE = True
@@ -200,14 +197,7 @@ def try_change_pitch_glitcher_state(inst):
 		inst.play_note(0, 0, 0.1, blocking = False)
 		PITCH_GLITCHER_STATE = False
 		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE = 0
-
-	elif (PITCH_GLITCHER_STATE == True 
-			and REST_MULTIPLIER < rest_multiplier_cpu_limit):
-
-		inst.play_note(0, 0, 0.1, blocking = False)
-		PITCH_GLITCHER_STATE = False		
-		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE = 0
-
+		
 	else:
 
 		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE += 1
@@ -221,12 +211,9 @@ def try_change_speed_jitter_state(inst):
 
 	global SPEED_JITTER_STATE, SPEED_JITTER_CALLS_SINCE_LAST_CHANGE
 
-	rest_multiplier_cpu_limit = 1.7  # to help save CPU in Max
-
 	if (SPEED_JITTER_STATE == False 
 			and SPEED_JITTER_CALLS_SINCE_LAST_CHANGE >= 2 
-			and random.choice([0, 0, 0, 0, 1]) == 1
-			and REST_MULTIPLIER >= rest_multiplier_cpu_limit):
+			and random.choice([0, 0, 0, 0, 1]) == 1):
 
 		inst.play_note(0, 0, 0.1, blocking = False)
 		SPEED_JITTER_STATE = True
@@ -238,13 +225,6 @@ def try_change_speed_jitter_state(inst):
 
 		inst.play_note(0, 0, 0.1, blocking = False)
 		SPEED_JITTER_STATE = False
-		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE = 0
-	
-	elif (SPEED_JITTER_STATE == True 
-			and REST_MULTIPLIER < rest_multiplier_cpu_limit):
-
-		inst.play_note(0, 0, 0.1, blocking = False)
-		SPEED_JITTER_STATE = False		
 		SPEED_JITTER_CALLS_SINCE_LAST_CHANGE = 0
 	
 	else:

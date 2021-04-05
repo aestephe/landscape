@@ -756,7 +756,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 261.0, 267.0, 1145.0, 428.0 ],
+						"rect" : [ 996.0, 382.0, 1145.0, 428.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1097,7 +1097,7 @@
 										}
 ,
 										"classnamespace" : "box",
-										"rect" : [ 766.0, 122.0, 640.0, 632.0 ],
+										"rect" : [ 18.0, 415.0, 640.0, 632.0 ],
 										"bglocked" : 0,
 										"openinpresentation" : 0,
 										"default_fontsize" : 12.0,
@@ -1125,6 +1125,7 @@
 										"style" : "",
 										"subpatcher_template" : "Alex-Template",
 										"assistshowspatchername" : 0,
+										"visible" : 1,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-6",
@@ -3958,6 +3959,7 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-11",
@@ -4883,7 +4885,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 250.0, 312.0, 1440.0, 579.0 ],
+						"rect" : [ 800.0, 459.0, 1440.0, 579.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -4911,6 +4913,7 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-64",
@@ -4929,7 +4932,7 @@
 										}
 ,
 										"classnamespace" : "box",
-										"rect" : [ 259.0, 275.0, 640.0, 480.0 ],
+										"rect" : [ 447.0, 285.0, 640.0, 480.0 ],
 										"bglocked" : 0,
 										"openinpresentation" : 0,
 										"default_fontsize" : 12.0,
@@ -4957,6 +4960,7 @@
 										"style" : "",
 										"subpatcher_template" : "Alex-Template",
 										"assistshowspatchername" : 0,
+										"visible" : 1,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-17",
@@ -5598,7 +5602,7 @@
 													"numinlets" : 1,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 100.0, 131.0, 70.0, 22.0 ],
+													"patching_rect" : [ 225.0, 116.0, 70.0, 22.0 ],
 													"text" : "loadmess 0"
 												}
 
