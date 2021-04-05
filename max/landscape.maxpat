@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 841.0, 241.0, 759.0, 564.0 ],
+		"rect" : [ 1076.0, 263.0, 759.0, 564.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -1125,7 +1125,6 @@
 										"style" : "",
 										"subpatcher_template" : "Alex-Template",
 										"assistshowspatchername" : 0,
-										"visible" : 1,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-6",
@@ -3861,8 +3860,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 38.0, 362.0, 75.0, 22.0 ],
-					"text" : "loadmess 6."
+					"patching_rect" : [ 38.0, 362.0, 80.0, 22.0 ],
+					"text" : "loadmess 12."
 				}
 
 			}
@@ -3959,7 +3958,6 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-11",
@@ -4913,7 +4911,6 @@
 						"style" : "",
 						"subpatcher_template" : "Alex-Template",
 						"assistshowspatchername" : 0,
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-64",
@@ -4960,7 +4957,6 @@
 										"style" : "",
 										"subpatcher_template" : "Alex-Template",
 										"assistshowspatchername" : 0,
-										"visible" : 1,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-17",
@@ -5257,7 +5253,7 @@
 													"numinlets" : 0,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 300.0, 116.0, 83.0, 22.0 ],
+													"patching_rect" : [ 311.0, 116.0, 83.0, 22.0 ],
 													"text" : "r master-reset"
 												}
 

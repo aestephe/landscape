@@ -27,19 +27,19 @@ VIEWERS = None
 
 PARAM_FILE_NAME = "landscape_params.txt"
 PARAM_FILE_LAST_UPDATE = -1
+PARAMS_INITIALIZED = False
 
-CHORD_DENSITY = 1
+CHORD_DENSITY = None
 CHORD_DENSITY_INCREMENT = 1
 CHORD_DENSITY_MIN = 1
 CHORD_DENSITY_MAX = 12
 
-REST_MULTIPLIER = 1
+REST_MULTIPLIER = None
 REST_MULTIPLIER_RATIO = 1.25
 REST_MULTIPLIER_MIN = 0.5
 REST_MULTIPLIER_MAX = 5.82
 
 CONFIG_FILE_NAME = "landscape_config.txt"
-
 API_KEY = open(CONFIG_FILE_NAME, 'r').readlines()[0]
 API_VIDEO_ID = open(CONFIG_FILE_NAME, 'r').readlines()[1]
 API_CALL_BASE_WAIT_TIME = 10
@@ -105,11 +105,17 @@ def update_parameters(session):
 	youtube = build("youtube", "v3", developerKey = API_KEY)
 	request = youtube.videos().list(part = "liveStreamingDetails",
 		       						id = API_VIDEO_ID)
-	iteration_options = [1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5]
+	iteration_options = [3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5]
 	iteration_options_index_rg = RandomizerGroup(nbr_randomizers = 2,
 									output_range = [0, len(iteration_options) - 1],
-									ban_repeat_average_value = True,
-									seed_value = 3)
+									ban_repeat_average_value = False,
+									seed_value = None)
+
+	fallback_iteration_options = [0, 1]
+	fallback_iteration_options_index_rg = RandomizerGroup(nbr_randomizers = 2,
+									output_range = [0, len(fallback_iteration_options) - 1],
+									ban_repeat_average_value = False,
+									seed_value = None)
 
 	while SHOULD_CONTINUE:
 
@@ -117,10 +123,12 @@ def update_parameters(session):
 
 		try:
 			print("***** Calling Google API")
-			current_viewers = int((request.execute()['items'][0]['liveStreamingDetails']['concurrentViewers']))			
+			response = request.execute()
+			# print(response)
+			current_viewers = int((response['items'][0]['liveStreamingDetails']['concurrentViewers']))			
 			print("***** Current viewers: " + str(current_viewers))
 
-			global VIEWERS, CHORD_DENSITY, REST_MULTIPLIER
+			global VIEWERS, CHORD_DENSITY, REST_MULTIPLIER, PARAMS_INITIALIZED
 
 			if VIEWERS is None:
 
@@ -129,6 +137,7 @@ def update_parameters(session):
 				params = check_param_file()
 				CHORD_DENSITY = Utilities.clip(int(params[0]), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
 				REST_MULTIPLIER = Utilities.clip(float(params[1]), REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
+				PARAMS_INITIALIZED = True
 
 			else:
 
@@ -141,7 +150,7 @@ def update_parameters(session):
 					REST_MULTIPLIER = Utilities.clip(float(params[1]), 0.5, 5.82)
 
 				else:
-					print("***** Assigning parameters based on new viewer count")
+					print("***** Assigning parameters based on viewer count")
 
 					# update variables according to the viewer count
 					if current_viewers > VIEWERS:
@@ -154,20 +163,30 @@ def update_parameters(session):
 						for _ in range(0, iteration_options[iteration_options_index_rg.get_average_value()]):
 							CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY + CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
 							REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER * REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
-				
+					else:
+						# same number of viewers - use the fallback iteration options to ensure there is some variety
+						print("***** !! Using fallback iteration options !!")
+						val = fallback_iteration_options_index_rg.get_average_value()
+						# print(val)
+						if random.choice([0, 1]) == 0:
+							for _ in range(0, fallback_iteration_options[val]):
+								CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY - CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
+								REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER / REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
+						else:
+							for _ in range(0, fallback_iteration_options[val]):
+								CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY + CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
+								REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER * REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
+
 			VIEWERS = current_viewers
 
 		except:
 			traceback.print_exception(*sys.exc_info())
 
 		print("***** New parameters:" + '\t' + str(CHORD_DENSITY) + '\t' + str(REST_MULTIPLIER))
-
-		time_until_next_update = (API_CALL_BASE_WAIT_TIME * REST_MULTIPLIER) / ((REST_MULTIPLIER / REST_MULTIPLIER_MAX) ** 0.3)
-
+		time_until_next_update = (API_CALL_BASE_WAIT_TIME * REST_MULTIPLIER) / ((REST_MULTIPLIER / REST_MULTIPLIER_MAX) ** 0.3)  # faster music stays around for longer
 		print("***** Next check in approx " + str(int(time_until_next_update)) + " seconds")
 		print("*********************************************************")
-
-		scamp.wait(time_until_next_update) # faster music stays around for longer
+		scamp.wait(time_until_next_update)
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -197,7 +216,7 @@ def try_change_pitch_glitcher_state(inst):
 		inst.play_note(0, 0, 0.1, blocking = False)
 		PITCH_GLITCHER_STATE = False
 		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE = 0
-		
+
 	else:
 
 		PITCH_GLITCHER_CALLS_SINCE_LAST_CHANGE += 1
@@ -420,6 +439,8 @@ s.wait(1)
 
 # fork the functions
 s.fork_unsynchronized(update_parameters, args = [s])
+while not PARAMS_INITIALIZED:
+	s.wait(0.1)
 s.fork(play_chords, args = [s])
 
 s.wait_forever()
