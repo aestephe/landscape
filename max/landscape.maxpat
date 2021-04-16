@@ -3860,8 +3860,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 38.0, 362.0, 80.0, 22.0 ],
-					"text" : "loadmess 12."
+					"patching_rect" : [ 38.0, 362.0, 77.0, 22.0 ],
+					"text" : "loadmess -3."
 				}
 
 			}
