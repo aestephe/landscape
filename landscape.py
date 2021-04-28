@@ -117,18 +117,27 @@ def update_parameters(session):
 									ban_repeat_average_value = False,
 									seed_value = None)
 
+	global VIEWERS, CHORD_DENSITY, REST_MULTIPLIER, PARAMS_INITIALIZED
+
 	while SHOULD_CONTINUE:
 
 		print("*********************************************************")
 
 		try:
+
 			print("***** Calling Google API")
 			response = request.execute()
 			# print(response)
-			current_viewers = int((response['items'][0]['liveStreamingDetails']['concurrentViewers']))			
-			print("***** Current viewers: " + str(current_viewers))
-
-			global VIEWERS, CHORD_DENSITY, REST_MULTIPLIER, PARAMS_INITIALIZED
+			current_viewers = 0
+			try:
+				current_viewers = int((response['items'][0]['liveStreamingDetails']['concurrentViewers']))
+			except:
+				traceback.print_exception(*sys.exc_info())
+				if VIEWERS is None:
+					current_viewers = 1
+				else:
+					current_viewers = VIEWERS
+			print("***** CURRENT VIEWERS: " + str(current_viewers))
 
 			if VIEWERS is None:
 
