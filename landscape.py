@@ -125,23 +125,34 @@ def update_parameters(session):
 
 		try:
 
-			print("***** Calling Google API")
-			response = request.execute()
-			# print(response)
 			current_viewers = 0
+			print("***** Calling Google API")
+
 			try:
+
+				response = request.execute()
 				current_viewers = int((response['items'][0]['liveStreamingDetails']['concurrentViewers']))
+
 			except:
+
+				# something went wrong with the YouTube request
+				# fallback to assuming that the number of viewers hasn't changed since the last check
+				# or, if this is the first time running the loop, assume the number of viewers is 1
 				traceback.print_exception(*sys.exc_info())
 				if VIEWERS is None:
 					current_viewers = 1
 				else:
 					current_viewers = VIEWERS
+
 			print("***** CURRENT VIEWERS: " + str(current_viewers))
+
+			# now that we've collected the number of current viewers we need to figure out to assign parameters
 
 			if VIEWERS is None:
 
-				# initialize the variables from the param file
+				# this is the first time running the loop
+				# rather than assigning parameters based on the current viewer count we just retrieved, 
+				# we will initialize the variables from the param file
 				print("***** Initializing parameters based on parameter file")
 				params = check_param_file()
 				CHORD_DENSITY = Utilities.clip(int(params[0]), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
@@ -186,6 +197,7 @@ def update_parameters(session):
 								CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY + CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
 								REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER * REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
 
+			# set the global variable to be equal to the new number of viewers
 			VIEWERS = current_viewers
 
 		except:
