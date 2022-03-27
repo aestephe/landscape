@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 331.0, 294.0, 759.0, 564.0 ],
+		"rect" : [ 959.0, 208.0, 759.0, 564.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -4883,7 +4883,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 800.0, 459.0, 1440.0, 579.0 ],
+						"rect" : [ 446.0, 459.0, 1440.0, 579.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -8603,7 +8603,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 315.0, 359.0, 640.0, 480.0 ],
+						"rect" : [ 649.0, 351.0, 640.0, 480.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -8662,8 +8662,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 217.0, 130.5, 118.0, 22.0 ],
-									"text" : "\"Direct Sound Du\" 1."
+									"patching_rect" : [ 217.0, 130.5, 148.0, 22.0 ],
+									"text" : "\"Direct Sound Duration\" 1."
 								}
 
 							}
@@ -8686,8 +8686,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 150.0, 248.5, 59.0, 22.0 ],
-									"text" : "Sympa 1."
+									"patching_rect" : [ 150.0, 248.5, 160.0, 22.0 ],
+									"text" : "\"Sympathetic Resonance\" 1."
 								}
 
 							}
@@ -8711,8 +8711,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 76.5, 202.5, 104.0, 22.0 ],
-									"text" : "\"Hard. Forte\" 0.45"
+									"patching_rect" : [ 76.5, 202.5, 154.0, 22.0 ],
+									"text" : "\"Hammer Hard. Forte\" 0.45"
 								}
 
 							}
@@ -8723,8 +8723,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 76.5, 178.5, 112.0, 22.0 ],
-									"text" : "\"Hard. Mezzo\" 0.45"
+									"patching_rect" : [ 76.5, 178.5, 161.0, 22.0 ],
+									"text" : "\"Hammer Hard. Mezzo\" 0.45"
 								}
 
 							}
@@ -8735,8 +8735,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 74.5, 154.5, 100.0, 22.0 ],
-									"text" : "\"Hard. Piano\" 0.4"
+									"patching_rect" : [ 74.5, 154.5, 150.0, 22.0 ],
+									"text" : "\"Hammer Hard. Piano\" 0.4"
 								}
 
 							}
@@ -8950,7 +8950,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 38.0, 30.0, 100.0, 22.0 ],
-					"text" : "plug \"Pianoteq 5\""
+					"text" : "plug \"Pianoteq 6\""
 				}
 
 			}
