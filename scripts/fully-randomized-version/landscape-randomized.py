@@ -110,7 +110,7 @@ def update_parameters(session):
 				cd = check_param_file()
 				CHORD_DENSITY = Utilities.clip(int(cd), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
 				REST_MULTIPLIER = get_rest_multiplier_from_chord_density(CHORD_DENSITY)
-				chord_density_randomizer_group =  RandomizerGroup(	nbr_randomizers = 3,
+				chord_density_randomizer_group =  RandomizerGroup(	nbr_randomizers = 5,
 													output_range = [CHORD_DENSITY_MIN, CHORD_DENSITY_MAX],
 													ban_repeat_average_value = False,
 													seed_value = CHORD_DENSITY)
