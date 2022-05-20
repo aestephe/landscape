@@ -6,6 +6,7 @@ import copy
 from collections import OrderedDict
 from googleapiclient.discovery import build
 import os
+import math
 from pyalex.chord import Chord
 from pyalex.pitch import Pitch
 from pyalex.rand import RandomizerGroup
@@ -25,9 +26,8 @@ OVERTONE_CLASSES = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 27]
 
 VIEWERS = None
 
-PARAM_FILE_NAME = "landscape_params.txt"
+PARAM_FILE_NAME = "landscape_randomized_params.txt"
 PARAM_FILE_LAST_UPDATE = -1
-PARAMS_INITIALIZED = False
 
 CHORD_DENSITY = None
 CHORD_DENSITY_INCREMENT = 1
@@ -35,14 +35,12 @@ CHORD_DENSITY_MIN = 1
 CHORD_DENSITY_MAX = 12
 
 REST_MULTIPLIER = None
-REST_MULTIPLIER_RATIO = 1.25
 REST_MULTIPLIER_MIN = 0.5
 REST_MULTIPLIER_MAX = 5.82
 
-CONFIG_FILE_NAME = "landscape_config.txt"
-API_KEY = open(CONFIG_FILE_NAME, 'r').readlines()[0]
-API_VIDEO_ID = open(CONFIG_FILE_NAME, 'r').readlines()[1]
-API_CALL_BASE_WAIT_TIME = 10
+PARAMS_INITIALIZED = False
+
+UPDATE_BASE_WAIT_TIME = 10
 
 SHORT_RESTS = [2, 2.5, 3.125, 3.906]
 LONG_RESTS = [3.906, 3.906, 4.883, 4.883]
@@ -75,18 +73,14 @@ def check_param_file():
 		f = open(PARAM_FILE_NAME, 'r')
 		lines = f.readlines()
 
-		if len(lines) < 2:
-			pass
-		elif lines[0] == "": 
-			pass
-		elif lines[1] == "":
+		if len(lines) < 1:
 			pass
 		else:
 			last_update_time = os.path.getmtime(PARAM_FILE_NAME)
 			if last_update_time <= PARAM_FILE_LAST_UPDATE:
 				pass
 			else:
-				out = [lines[0], lines[1]]
+				out = lines[0]
 				PARAM_FILE_LAST_UPDATE = last_update_time
 	except:
 		traceback.print_exception(*sys.exc_info())
@@ -94,117 +88,51 @@ def check_param_file():
 	return out
 
 
+def get_rest_multiplier_from_chord_density(chord_density):
+	exponent = math.log(REST_MULTIPLIER_MAX, REST_MULTIPLIER_MIN*CHORD_DENSITY_MAX)
+	return pow(REST_MULTIPLIER_MIN*chord_density, exponent)
+
+
 def update_parameters(session):
 
-	"""
-	Query YouTube for stream viewership.
-	Update parameters based on either a change in viewership, or based on the manual parameter file.
-	Loops until SHOULD_CONTINUE is set to False.
-	"""
+	chord_density_randomizer_group = None
 
-	youtube = build("youtube", "v3", developerKey = API_KEY)
-	request = youtube.videos().list(part = "liveStreamingDetails",
-		       						id = API_VIDEO_ID)
-	iteration_options = [3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5]
-	iteration_options_index_rg = RandomizerGroup(nbr_randomizers = 2,
-									output_range = [0, len(iteration_options) - 1],
-									ban_repeat_average_value = False,
-									seed_value = None)
-
-	fallback_iteration_options = [0, 1]
-	fallback_iteration_options_index_rg = RandomizerGroup(nbr_randomizers = 2,
-									output_range = [0, len(fallback_iteration_options) - 1],
-									ban_repeat_average_value = False,
-									seed_value = None)
-
-	global VIEWERS, CHORD_DENSITY, REST_MULTIPLIER, PARAMS_INITIALIZED
+	global CHORD_DENSITY, REST_MULTIPLIER, PARAMS_INITIALIZED
 
 	while SHOULD_CONTINUE:
 
 		print("*********************************************************")
 
-		try:
+		try: 
 
-			current_viewers = 0
-			print("***** Calling Google API")
-
-			try:
-
-				response = request.execute()
-				current_viewers = int((response['items'][0]['liveStreamingDetails']['concurrentViewers']))
-
-			except:
-
-				# something went wrong with the YouTube request
-				# fallback to assuming that the number of viewers hasn't changed since the last check
-				# or, if this is the first time running the loop, assume the number of viewers is 1
-				traceback.print_exception(*sys.exc_info())
-				if VIEWERS is None:
-					current_viewers = 1
-				else:
-					current_viewers = VIEWERS
-
-			print("***** CURRENT VIEWERS: " + str(current_viewers))
-
-			# now that we've collected the number of current viewers we need to figure out to assign parameters
-
-			if VIEWERS is None:
-
-				# this is the first time running the loop
-				# rather than assigning parameters based on the current viewer count we just retrieved, 
-				# we will initialize the variables from the param file
+			if chord_density_randomizer_group is None:
 				print("***** Initializing parameters based on parameter file")
-				params = check_param_file()
-				CHORD_DENSITY = Utilities.clip(int(params[0]), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
-				REST_MULTIPLIER = Utilities.clip(float(params[1]), REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
+				cd = check_param_file()
+				CHORD_DENSITY = Utilities.clip(int(cd), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
+				REST_MULTIPLIER = get_rest_multiplier_from_chord_density(CHORD_DENSITY)
+				chord_density_randomizer_group =  RandomizerGroup(	nbr_randomizers = 3,
+													output_range = [CHORD_DENSITY_MIN, CHORD_DENSITY_MAX],
+													ban_repeat_average_value = False,
+													seed_value = CHORD_DENSITY)
 				PARAMS_INITIALIZED = True
-
 			else:
 
 				# check the param file first to see if it has been updated
-				params = check_param_file()
-				if params is not None:
+				cd = check_param_file()
+				if cd is not None:
 					print("***** Assigning parameters based on parameter file")
-
-					CHORD_DENSITY = Utilities.clip(int(params[0]), 1, 12)
-					REST_MULTIPLIER = Utilities.clip(float(params[1]), 0.5, 5.82)
-
+					CHORD_DENSITY = Utilities.clip(int(cd), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
+					REST_MULTIPLIER = get_rest_multiplier_from_chord_density(CHORD_DENSITY)
 				else:
-					print("***** Assigning parameters based on viewer count")
-
-					# update variables according to the viewer count
-					if current_viewers > VIEWERS:
-						# more viewers - decrease chord density, increase speed
-						for _ in range(0, iteration_options[iteration_options_index_rg.get_average_value()]):
-							CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY - CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
-							REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER / REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
-					elif current_viewers < VIEWERS:
-						# fewer viewers - increase chord density, decrease speed
-						for _ in range(0, iteration_options[iteration_options_index_rg.get_average_value()]):
-							CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY + CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
-							REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER * REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
-					else:
-						# same number of viewers - use the fallback iteration options to ensure there is some variety
-						print("***** !! Using fallback iteration options !!")
-						val = fallback_iteration_options_index_rg.get_average_value()
-						# print(val)
-						if random.choice([0, 1]) == 0:
-							for _ in range(0, fallback_iteration_options[val]):
-								CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY - CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
-								REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER / REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
-						else:
-							for _ in range(0, fallback_iteration_options[val]):
-								CHORD_DENSITY = Utilities.clip(int(CHORD_DENSITY + CHORD_DENSITY_INCREMENT), CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)
-								REST_MULTIPLIER = Utilities.clip(REST_MULTIPLIER * REST_MULTIPLIER_RATIO, REST_MULTIPLIER_MIN, REST_MULTIPLIER_MAX)
-
-			# set the global variable to be equal to the new number of viewers
-			VIEWERS = current_viewers
+					print("***** Assigning parameters based on randomizer group")
+					CHORD_DENSITY = chord_density_randomizer_group.get_average_value()
+					REST_MULTIPLIER = get_rest_multiplier_from_chord_density(CHORD_DENSITY)
 
 		except:
 			traceback.print_exception(*sys.exc_info())
 
 		print("***** New parameters:" + '\t' + str(CHORD_DENSITY) + '\t' + str(REST_MULTIPLIER))
-		time_until_next_update = (API_CALL_BASE_WAIT_TIME * REST_MULTIPLIER) / ((REST_MULTIPLIER / REST_MULTIPLIER_MAX) ** 0.3)  # faster music stays around for longer
+		time_until_next_update = (UPDATE_BASE_WAIT_TIME * REST_MULTIPLIER) / ((REST_MULTIPLIER / REST_MULTIPLIER_MAX) ** 0.3)  # faster music stays around for longer
 		print("***** Next check in approx " + str(int(time_until_next_update)) + " seconds")
 		print("*********************************************************")
 		scamp.wait(time_until_next_update)
@@ -314,8 +242,9 @@ def get_midi_numbers_to_play(chords, chord_index_rg):
 													CHORD_DENSITY_MIN, CHORD_DENSITY_MAX)]
 
 	selected_pitches = try_transpose_pitches([p for p in chosen_chord.pitches if p.overtone_class in ocs])
+	selected_pitches = sorted(selected_pitches, key = lambda p: (p.midi_number))
 
-	print("----- Returning chord " + str(chord_index) + " with overtone classes " + str(sorted([p.overtone_class for p in selected_pitches])) + 
+	print("----- Returning chord " + str(chord_index) + " with overtone classes " + str([p.overtone_class for p in selected_pitches]) + 
 						", midi " + str([int(p.midi_number) for p in selected_pitches]))
 
 	return [p.midi_number for p in selected_pitches]
