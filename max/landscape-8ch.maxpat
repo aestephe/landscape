@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 787.0, 104.0, 819.0, 584.0 ],
+		"rect" : [ 736.0, 122.0, 819.0, 584.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,19 @@
 		"subpatcher_template" : "Alex-Template",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"fontface" : 1,
+					"fontsize" : 20.0,
+					"id" : "obj-6",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 330.0, 14.0, 242.0, 29.0 ],
+					"text" : "STOP/RESET"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-13",
 					"maxclass" : "newobj",
@@ -176,7 +189,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 427.5, 57.0, 24.0, 24.0 ]
+					"patching_rect" : [ 427.5, 72.0, 24.0, 24.0 ]
 				}
 
 			}
@@ -211,7 +224,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
-					"patching_rect" : [ 330.0, 135.5, 42.0, 22.0 ],
+					"patching_rect" : [ 330.0, 150.5, 42.0, 22.0 ],
 					"text" : "midiin"
 				}
 
@@ -670,7 +683,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 383.0, 132.0, 61.0, 29.0 ],
+					"patching_rect" : [ 383.0, 147.0, 61.0, 29.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -3816,7 +3829,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 390.0, 57.0, 24.0, 22.0 ],
+					"patching_rect" : [ 390.0, 72.0, 24.0, 22.0 ],
 					"text" : "t b"
 				}
 
@@ -3828,7 +3841,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 390.0, 30.0, 99.0, 22.0 ],
+					"patching_rect" : [ 390.0, 45.0, 99.0, 22.0 ],
 					"text" : "udpreceive 7700"
 				}
 
@@ -3839,20 +3852,21 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 330.0, 94.0, 87.0, 22.0 ],
+					"patching_rect" : [ 330.0, 109.0, 87.0, 22.0 ],
 					"text" : "s master-reset"
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"bgcolor" : [ 0.870588235294118, 0.0, 0.0, 1.0 ],
 					"id" : "obj-78",
 					"maxclass" : "button",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 330.0, 30.0, 47.0, 47.0 ]
+					"patching_rect" : [ 330.0, 45.0, 47.0, 47.0 ]
 				}
 
 			}
