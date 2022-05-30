@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 736.0, 122.0, 819.0, 584.0 ],
+		"rect" : [ 776.0, 78.0, 819.0, 584.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -1026,7 +1026,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 128.0, 364.0, 586.0, 22.0 ],
+					"patching_rect" : [ 128.0, 364.0, 583.899999999999864, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -1034,7 +1034,7 @@
 						"tags" : ""
 					}
 ,
-					"text" : "p mixer"
+					"text" : "p speaker-calibration"
 				}
 
 			}
@@ -4817,8 +4817,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 26.5, 335.0, 91.0, 22.0 ],
-					"text" : "loadmess -14.5"
+					"patching_rect" : [ 38.0, 335.0, 84.0, 22.0 ],
+					"text" : "loadmess -10."
 				}
 
 			}
