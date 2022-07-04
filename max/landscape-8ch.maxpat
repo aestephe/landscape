@@ -1152,7 +1152,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 8,
 					"numoutlets" : 0,
-					"patching_rect" : [ 70.0, 512.0, 254.0, 21.0 ],
+					"patching_rect" : [ 70.0, 509.0, 254.550000000000011, 21.0 ],
 					"text" : "dac~ 1 2 3 4 5 6 7 8"
 				}
 
